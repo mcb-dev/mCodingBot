@@ -1,4 +1,4 @@
-from mcodingbot.bot import mCB
+from mcodingbot.bot import Bot
 
 if __name__ == "__main__":
-    mCB().run()
+    Bot().run()

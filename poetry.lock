@@ -188,6 +188,18 @@ server = ["pynacl (>=1.5,<2.0)"]
 speedups = ["aiodns (>=3.0,<4.0)", "cchardet (>=2.1,<3.0)", "Brotli (>=1.0,<2.0)", "ciso8601 (>=2.2,<3.0)"]
 
 [[package]]
+name = "hikari-crescent"
+version = "0.1.0b9"
+description = "🌕 A dead simple command handler for Hikari"
+category = "main"
+optional = false
+python-versions = ">=3.8,<3.11"
+
+[package.dependencies]
+attrs = ">=21.4.0,<22.0.0"
+hikari = ">=2.0.0.dev108"
+
+[[package]]
 name = "idna"
 version = "3.3"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -392,7 +404,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "d42c6f85eab7cc0cefbd26b58cde82d50658f71ab211b460710ed0560eb87650"
+content-hash = "d28e246e5a770e9ec0362f25f1786228c179a20760b7d1e2b6bd4bbbcac9817d"
 
 [metadata.files]
 aiohttp = [
@@ -602,6 +614,10 @@ frozenlist = [
 hikari = [
     {file = "hikari-2.0.0.dev108-py3-none-any.whl", hash = "sha256:bc78e5c753f0b87ae24e1a644a2e4d01d08d5ed35cbaca0f160da5283a589785"},
     {file = "hikari-2.0.0.dev108.tar.gz", hash = "sha256:d13cfcd0e3732185fa3048b5d9fd8b6078b5dbb0df7820ba7e3e55083bf9d4b5"},
+]
+hikari-crescent = [
+    {file = "hikari-crescent-0.1.0b9.tar.gz", hash = "sha256:02dac45020ab4216644136aaa93e75b41ae6c4b82bbe76a0e9c208ae4044e154"},
+    {file = "hikari_crescent-0.1.0b9-py3-none-any.whl", hash = "sha256:2b6b5108728de779a48ac2961e07fa2bad111e8668dd99a1f2d87d3f53c62b13"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},

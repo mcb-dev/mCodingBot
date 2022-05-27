@@ -1,3 +1,7 @@
+# IDE folder settings
+.idea
+.vs
+
 config.json
 
 # Byte-compiled / optimized / DLL files

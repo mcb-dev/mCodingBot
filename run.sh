@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 while true
 do
-    $1 -m poetry run python -m mcodingbot
+    "${1:-python}" -m poetry run python -m mcodingbot
 
     echo "Hit CTRL+C to stop..."
     sleep 5

@@ -1,0 +1,20 @@
+[tool.black]
+line-length=79
+skip-magic-trailing-comma=true
+
+[tool.poetry]
+name = "mcodingbot"
+version = "0.1.0"
+description = "The Discord bot for the mCoding Discord server."
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+nox = "^2022.1.7"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -24,7 +24,7 @@ class Config:
             tosave[k] = v
 
         with pth.open("w+") as f:
-            f.write(json.dumps(tosave, indent=4))
+            f.write(json.dumps(tosave, indent=2))
 
     @classmethod
     def load(cls) -> "Config":

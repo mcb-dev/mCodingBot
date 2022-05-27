@@ -10,7 +10,9 @@ authors = ["Your Name <you@example.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8,<3.11"
+hikari = "^2.0.0-alpha.108"
+hikari-crescent = "^0.1.0-beta.9"
 
 [tool.poetry.dev-dependencies]
 nox = "^2022.1.7"

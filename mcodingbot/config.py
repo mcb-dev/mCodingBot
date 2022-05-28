@@ -2,7 +2,7 @@ import inspect
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Dict, cast
 
 _ALWAYS_SAVE = ["discord_token"]
 
@@ -11,11 +11,11 @@ _ALWAYS_SAVE = ["discord_token"]
 class Config:
     discord_token: str = "DISCORD_TOKEN"
 
-    def save(self):
+    def save(self) -> None:
         pth = Path("config.json")
 
         dct = asdict(self)
-        tosave: dict[str, Any] = {}
+        tosave: Dict[str, Any] = {}
         defaults = self.__class__()
         for k, v in dct.items():
             if k not in _ALWAYS_SAVE and getattr(defaults, k) == v:
@@ -38,7 +38,9 @@ class Config:
                 c = Config(
                     **{
                         k: v
-                        for k, v in cast(dict, json.loads(f.read())).items()
+                        for k, v in cast(
+                            "Dict[Any, Any]", json.loads(f.read())
+                        ).items()
                         if k in keys
                     }
                 )

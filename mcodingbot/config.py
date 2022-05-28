@@ -15,7 +15,7 @@ class Config:
         pth = Path("config.json")
 
         dct = asdict(self)
-        tosave: dict[str, Any] = {}
+        tosave: Dict[str, Any] = {}
         defaults = self.__class__()
         for k, v in dct.items():
             if k not in _ALWAYS_SAVE and getattr(defaults, k) == v:

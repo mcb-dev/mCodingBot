@@ -12,6 +12,12 @@ class Config:
     discord_token: str = "DISCORD_TOKEN"
     theme: int = 0x0B7CD3
 
+    mcoding_youtube: str = (
+        "https://www.youtube.com/channel/UCaiL2GDNpLYH6Wokkk1VNcg"
+    )
+    mcoding_repo: str = "https://github.com/mCodingLLC/VideosSampleCode"
+    mcodingbot_repo: str = "https://github.com/mcb-dev/mCodingBot"
+
     def save(self) -> None:
         pth = Path("config.json")
 

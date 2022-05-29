@@ -12,11 +12,11 @@ plugin = crescent.Plugin("reactions")
 @crescent.event
 async def on_message(event: hikari.MessageCreateEvent) -> None:
     if event.message.type is hikari.MessageType.GUILD_MEMBER_JOIN:
-        await message.add_reaction("👋")
+        await event.message.add_reaction("👋")
 
     elif (
         event.message.content
-        and RUST_REGEX.search(message.content)
-        and "🚀" in message.content
+        and RUST_REGEX.search(event.message.content)
+        and "🚀" in event.message.content
     ):
-        await message.add_reaction("🚀")
+        await event.message.add_reaction("🚀")

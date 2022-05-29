@@ -24,6 +24,6 @@ class LinksCommand:
                 f"**[mCoding Youtube]({CONFIG.mcoding_youtube})**\n"
                 f"**[mCoding repo]({CONFIG.mcoding_repo})**\n"
                 f"**[mCodingBot repo]({CONFIG.mcodingbot_repo})**"
-            )
+            ),
         )
         await ctx.respond(embed=embed)

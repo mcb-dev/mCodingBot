@@ -10,6 +10,7 @@ _ALWAYS_SAVE = ["discord_token"]
 @dataclass
 class Config:
     discord_token: str = "DISCORD_TOKEN"
+    theme: int = 0x0B7CD3
 
     def save(self) -> None:
         pth = Path("config.json")

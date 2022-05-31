@@ -189,7 +189,7 @@ speedups = ["aiodns (>=3.0,<4.0)", "cchardet (>=2.1,<3.0)", "Brotli (>=1.0,<2.0)
 
 [[package]]
 name = "hikari-crescent"
-version = "0.1.0b9"
+version = "0.1.0b10"
 description = "🌕 A dead simple command handler for Hikari"
 category = "main"
 optional = false
@@ -404,7 +404,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "d28e246e5a770e9ec0362f25f1786228c179a20760b7d1e2b6bd4bbbcac9817d"
+content-hash = "655c94f62eea9324a7a43db52a5d0bdd8b8961778bc240c60767c20b013cf3ad"
 
 [metadata.files]
 aiohttp = [
@@ -616,8 +616,8 @@ hikari = [
     {file = "hikari-2.0.0.dev108.tar.gz", hash = "sha256:d13cfcd0e3732185fa3048b5d9fd8b6078b5dbb0df7820ba7e3e55083bf9d4b5"},
 ]
 hikari-crescent = [
-    {file = "hikari-crescent-0.1.0b9.tar.gz", hash = "sha256:02dac45020ab4216644136aaa93e75b41ae6c4b82bbe76a0e9c208ae4044e154"},
-    {file = "hikari_crescent-0.1.0b9-py3-none-any.whl", hash = "sha256:2b6b5108728de779a48ac2961e07fa2bad111e8668dd99a1f2d87d3f53c62b13"},
+    {file = "hikari-crescent-0.1.0b10.tar.gz", hash = "sha256:b6977d8751e26aa992396c4880e9d901c9fd2fe5b2298409030cf7547ac2f249"},
+    {file = "hikari_crescent-0.1.0b10-py3-none-any.whl", hash = "sha256:5b8d6f722741f278e7576b008b9a208ed5d45522d312291c33fcd5fcf18c6626"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},

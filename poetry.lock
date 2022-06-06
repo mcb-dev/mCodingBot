@@ -189,7 +189,7 @@ speedups = ["aiodns (>=3.0,<4.0)", "cchardet (>=2.1,<3.0)", "Brotli (>=1.0,<2.0)
 
 [[package]]
 name = "hikari-crescent"
-version = "0.1.0b10"
+version = "0.1.0"
 description = "🌕 A dead simple command handler for Hikari"
 category = "main"
 optional = false
@@ -198,6 +198,7 @@ python-versions = ">=3.8,<3.11"
 [package.dependencies]
 attrs = ">=21.4.0,<22.0.0"
 hikari = ">=2.0.0.dev108"
+pycooldown = ">=0.1.0-beta.6,<0.2.0"
 
 [[package]]
 name = "idna"
@@ -259,7 +260,7 @@ reports = ["lxml"]
 name = "mypy-extensions"
 version = "0.4.3"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -327,6 +328,17 @@ description = "Python style guide checker"
 category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
+name = "pycooldown"
+version = "0.1.0b6"
+description = "A lightning fast cooldown/ratelimit implementation."
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[package.dependencies]
+mypy-extensions = ">=0.4.3,<0.5.0"
 
 [[package]]
 name = "pyflakes"
@@ -404,7 +416,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "655c94f62eea9324a7a43db52a5d0bdd8b8961778bc240c60767c20b013cf3ad"
+content-hash = "ddd8d398770b0757a58db2aa7e0d153a41eb6d2722f526d4832945558aed864b"
 
 [metadata.files]
 aiohttp = [
@@ -616,8 +628,8 @@ hikari = [
     {file = "hikari-2.0.0.dev108.tar.gz", hash = "sha256:d13cfcd0e3732185fa3048b5d9fd8b6078b5dbb0df7820ba7e3e55083bf9d4b5"},
 ]
 hikari-crescent = [
-    {file = "hikari-crescent-0.1.0b10.tar.gz", hash = "sha256:b6977d8751e26aa992396c4880e9d901c9fd2fe5b2298409030cf7547ac2f249"},
-    {file = "hikari_crescent-0.1.0b10-py3-none-any.whl", hash = "sha256:5b8d6f722741f278e7576b008b9a208ed5d45522d312291c33fcd5fcf18c6626"},
+    {file = "hikari-crescent-0.1.0.tar.gz", hash = "sha256:e3147f5bcdf5df6bc2c774e5fdf47548066b5898f12c050157b88bc64d1cf02f"},
+    {file = "hikari_crescent-0.1.0-py3-none-any.whl", hash = "sha256:d0b5590b25af016ffa4ae941ed11748610d600f65be63a8ea63fd7c04c70cc9c"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
@@ -744,6 +756,10 @@ py = [
 pycodestyle = [
     {file = "pycodestyle-2.8.0-py2.py3-none-any.whl", hash = "sha256:720f8b39dde8b293825e7ff02c475f3077124006db4f440dcbc9a20b76548a20"},
     {file = "pycodestyle-2.8.0.tar.gz", hash = "sha256:eddd5847ef438ea1c7870ca7eb78a9d47ce0cdb4851a5523949f2601d0cbbe7f"},
+]
+pycooldown = [
+    {file = "pycooldown-0.1.0b6-py3-none-any.whl", hash = "sha256:fbedc95046c3e214c2951cb7f2c7fad089726677607c871ca5d5a622f6356309"},
+    {file = "pycooldown-0.1.0b6.tar.gz", hash = "sha256:621c6b33fcf5dd314f390f56d4dd51361c094fce2625c35ccb16e265ead4e313"},
 ]
 pyflakes = [
     {file = "pyflakes-2.4.0-py2.py3-none-any.whl", hash = "sha256:3bb3a3f256f4b7968c9c788781e4ff07dce46bdf12339dcda61053375426ee2e"},

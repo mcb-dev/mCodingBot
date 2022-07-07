@@ -36,13 +36,25 @@ async def update_channels(bot: Bot) -> None:
     assert view_channel
     assert member_channel
 
-    await sub_channel.edit(name=f"Subs: {display_stats(stats.subs)}")
-    await view_channel.edit(name=f"Views: {display_stats(stats.views)}")
+    if sub_channel:
+        await sub_channel.edit(name=f"Subs: {display_stats(stats.subs)}")
+    else:
+        LOGGER.warning("No sub count channel to update stats for.")
+
+    if view_channel:
+        await view_channel.edit(name=f"Views: {display_stats(stats.views)}")
+    else:
+        LOGGER.warning("No view count channel to update stats for.")
 
     guild = bot.cache.get_guild(CONFIG.mcoding_server)
-    assert guild
+    if not guild:
+        return LOGGER.warning(
+            "Couldn't find mCoding guild, not updating member count."
+        )
+
     member_count = guild.member_count
-    assert member_count is not None
+    if member_count is None:
+        return LOGGER.error("Cached guild didn't contain member count.")
 
     await member_channel.edit(name=f"Members: {display_stats(member_count)}")
 

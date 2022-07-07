@@ -21,8 +21,7 @@ async def loop_update_channels(bot: Bot) -> None:
         try:
             await update_channels(bot)
         except Exception:
-            print("Failed to update channel stats:")
-            traceback.print_exc()
+            LOGGER.error("Failed to update channel stats:", exc_info=True)
 
         await asyncio.sleep(5 * 60)
 

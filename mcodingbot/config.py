@@ -12,6 +12,14 @@ class Config:
     discord_token: str = "DISCORD_TOKEN"
     theme: int = 0x0B7CD3
 
+    mcoding_server: int = -1
+    sub_count_channel: int = -1
+    view_count_channel: int = -1
+    member_count_channel: int = -1
+
+    mcoding_yt_id: str = ""
+    yt_api_key: str = ""
+
     mcoding_youtube: str = (
         "https://www.youtube.com/channel/UCaiL2GDNpLYH6Wokkk1VNcg"
     )

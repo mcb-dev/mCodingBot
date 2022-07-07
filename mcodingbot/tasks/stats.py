@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import traceback
 from dataclasses import dataclass
 from math import log
@@ -10,6 +11,9 @@ from mcodingbot.config import CONFIG
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot
+
+
+LOGGER = logging.getLogger(__file__)
 
 
 async def loop_update_channels(bot: Bot) -> None:
@@ -67,24 +71,31 @@ async def get_stats(bot: Bot) -> Stats:
         response: dict[str, Any] = await res.json()
 
     if not response:
+        LOGGER.error("Received 2XX but no data.")
         return _last_known_stats
 
     items = response.get("items")
     if not items:
+        LOGGER.error("Response did not contain 'items'.")
         return _last_known_stats
 
     channel = items[0]
     if channel.get("id") != CONFIG.mcoding_yt_id:
+        LOGGER.error("Channel ID was not mCoding.")
         return _last_known_stats
 
     statistics = channel.get("statistics")
     if not statistics:
+        LOGGER.error("mCoding channel did not contain 'statistics'.")
         return _last_known_stats
 
     subs = float(statistics.get("subscriberCount", 0))
     views = float(statistics.get("viewCount", 0))
 
     if not (subs and views):
+        LOGGER.error(
+            "Statistics did not contain subscriberCount and viewCount."
+        )
         return _last_known_stats
 
     _last_known_stats.subs = subs

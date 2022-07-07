@@ -52,7 +52,7 @@ class Stats:
 
 
 BASE_URL = "https://www.googleapis.com/youtube/v3/channels"
-LAST_STATS = Stats(0, 0)
+_last_known_stats = Stats(0, 0)
 
 
 async def get_stats(bot: Bot) -> Stats:
@@ -63,58 +63,57 @@ async def get_stats(bot: Bot) -> Stats:
 
     session = await bot.get_session()
     async with session.get(link) as res:
+        res.raise_for_status()
         response: dict[str, Any] = await res.json()
 
     if not response:
-        return LAST_STATS
+        return _last_known_stats
 
     items = response.get("items")
     if not items:
-        return LAST_STATS
+        return _last_known_stats
 
     channel = items[0]
     if channel.get("id") != CONFIG.mcoding_yt_id:
-        return LAST_STATS
+        return _last_known_stats
 
     statistics = channel.get("statistics")
     if not statistics:
-        return LAST_STATS
+        return _last_known_stats
 
     subs = float(statistics.get("subscriberCount", 0))
     views = float(statistics.get("viewCount", 0))
 
-    if not subs or not views:
-        return LAST_STATS
+    if not (subs and views):
+        return _last_known_stats
 
-    LAST_STATS.subs = subs
-    LAST_STATS.views = views
-    return LAST_STATS
+    _last_known_stats.subs = subs
+    _last_known_stats.views = views
+    return _last_known_stats
 
 
 def display_stats(stat: int | float) -> str:
-    int_stat = stat
-
-    if int_stat < 10**3:
-        pretty_stat = int_stat
+    if stat < 10**3:
+        pretty_stat = stat
         unit = ""
-    elif int_stat < 10**6:
-        pretty_stat = int_stat / 10**3
+    elif stat < 10**6:
+        pretty_stat = stat / 10**3
         unit = "K"
     else:
-        pretty_stat = int_stat / 10**6
+        pretty_stat = stat / 10**6
         unit = "M"
 
     pretty_stat = round(pretty_stat, 2)
 
-    exp_stat = round(log(int_stat, 2), 1)
+    exp_stat = round(log(stat, 2), 1)
     # ^ this might not be as accurate as the member count thing when
     # someone picky actually calculates it, but I suppose it's not
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"
 
-    if exp_stat % 1 == 0:
+    if exp_stat.is_integer():
         exp_stat = int(exp_stat)
 
-    if pretty_stat % 1 == 0:
+    if pretty_stat.is_integer():
         pretty_stat = int(pretty_stat)
 
     return f"2**{exp_stat} ({pretty_stat}{unit})"

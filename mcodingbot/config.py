@@ -17,8 +17,8 @@ class Config:
     view_count_channel: int = -1
     member_count_channel: int = -1
 
-    mcoding_yt_id: str = ""
-    yt_api_key: str = ""
+    mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
+    yt_api_key: str = "YOUTUBE_API_KEY"
 
     mcoding_youtube: str = (
         "https://www.youtube.com/channel/UCaiL2GDNpLYH6Wokkk1VNcg"

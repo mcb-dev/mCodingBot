@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import traceback
 from dataclasses import dataclass
 from math import log
 from typing import TYPE_CHECKING, Any

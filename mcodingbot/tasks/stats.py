@@ -75,8 +75,7 @@ async def get_stats(bot: Bot) -> Stats:
         f"&key={CONFIG.yt_api_key}"
     )
 
-    session = await bot.get_session()
-    async with session.get(link) as res:
+    async with bot.session.get(link) as res:
         res.raise_for_status()
         response: dict[str, Any] = await res.json()
 

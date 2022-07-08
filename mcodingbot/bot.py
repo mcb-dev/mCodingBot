@@ -19,12 +19,14 @@ class Bot(crescent.Bot):
 
         self._session: aiohttp.ClientSession | None = None
 
-    async def get_session(self) -> aiohttp.ClientSession:
-        if not self._session or self._session.closed:
-            self._session = aiohttp.ClientSession()
+    @property
+    def session(self) -> aiohttp.ClientSession:
+        if not self._session:
+            raise AttributeError("Session has not been set yet.")
         return self._session
 
     async def start(self, *args: Any, **kwargs: Any) -> None:
+        self._session = aiohttp.ClientSession()
         await super().start(*args, **kwargs)
 
         asyncio.create_task(loop_update_channels(self))

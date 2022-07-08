@@ -32,10 +32,6 @@ async def update_channels(bot: Bot) -> None:
     view_channel = bot.cache.get_guild_channel(CONFIG.view_count_channel)
     member_channel = bot.cache.get_guild_channel(CONFIG.member_count_channel)
 
-    assert sub_channel
-    assert view_channel
-    assert member_channel
-
     if sub_channel:
         await sub_channel.edit(name=f"Subs: {display_stats(stats.subs)}")
     else:

@@ -47,7 +47,8 @@ async def update_channels(bot: Bot) -> None:
         return LOGGER.warning(
             "Couldn't find mCoding guild, not updating member count."
         )
-
+    if not member_channel:
+        return LOGGER.warning("No member count channel to update stats for.")
     member_count = guild.member_count
     if member_count is None:
         return LOGGER.error("Cached guild didn't contain member count.")

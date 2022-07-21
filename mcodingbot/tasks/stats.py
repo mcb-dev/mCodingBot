@@ -6,7 +6,10 @@ from dataclasses import dataclass
 from math import log
 from typing import TYPE_CHECKING, Any
 
+from crescent.ext import tasks
+
 from mcodingbot.config import CONFIG
+from mcodingbot.utils import Plugin
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot
@@ -15,14 +18,16 @@ if TYPE_CHECKING:
 LOGGER = logging.getLogger(__file__)
 
 
-async def loop_update_channels(bot: Bot) -> None:
-    while True:
-        try:
-            await update_channels(bot)
-        except Exception:
-            LOGGER.error("Failed to update channel stats:", exc_info=True)
+plugin = Plugin()
 
-        await asyncio.sleep(5 * 60)
+
+@plugin.include
+@tasks.loop(minutes=5)
+async def loop() -> None:
+    try:
+        await update_channels(plugin.app)
+    except Exception:
+        LOGGER.error("Failed to update channel stats:", exc_info=True)
 
 
 async def update_channels(bot: Bot) -> None:

@@ -3,9 +3,11 @@ import re
 import crescent
 import hikari
 
+from mcodingbot.utils import Plugin
+
 RUST_REGEX = re.compile(r"\brust\b", flags=re.I)
 
-plugin = crescent.Plugin()
+plugin = Plugin()
 
 
 @plugin.include

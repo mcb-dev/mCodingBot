@@ -5,7 +5,7 @@ import hikari
 
 RUST_REGEX = re.compile(r"\brust\b", flags=re.I)
 
-plugin = crescent.Plugin("reactions")
+plugin = crescent.Plugin()
 
 
 @plugin.include

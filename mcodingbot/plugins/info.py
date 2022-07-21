@@ -3,7 +3,7 @@ import hikari
 
 from mcodingbot.config import CONFIG
 
-plugin = crescent.Plugin("basic")
+plugin = crescent.Plugin()
 
 
 @plugin.include

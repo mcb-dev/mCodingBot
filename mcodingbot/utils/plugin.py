@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import crescent
 import typing
+
+import crescent
 
 if typing.TYPE_CHECKING:
     from mcodingbot.bot import Bot

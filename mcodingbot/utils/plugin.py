@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import crescent
 import typing
 
@@ -10,4 +12,6 @@ __all__: typing.Sequence[str] = ("Plugin",)
 class Plugin(crescent.Plugin):
     @property
     def app(self) -> Bot:
-        return typing.cast(Bot, super().app)
+        # NOTE: Worried that not using `if TYPE_CHECKING` for `Bot` will cause circular
+        # imports later down the line.
+        return typing.cast("Bot", super().app)

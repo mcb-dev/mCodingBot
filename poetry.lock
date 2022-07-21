@@ -141,7 +141,7 @@ python-dateutil = "*"
 
 [[package]]
 name = "distlib"
-version = "0.3.4"
+version = "0.3.5"
 description = "Distribution utilities"
 category = "dev"
 optional = false
@@ -200,7 +200,7 @@ speedups = ["aiodns (>=3.0,<4.0)", "cchardet (>=2.1,<3.0)", "Brotli (>=1.0,<2.0)
 
 [[package]]
 name = "hikari-crescent"
-version = "0.2.3"
+version = "0.2.4"
 description = "🌕 A command handler for Hikari that keeps your project neat and tidy."
 category = "main"
 optional = false
@@ -401,7 +401,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "types-croniter"
-version = "1.3.0"
+version = "1.3.1"
 description = "Typing stubs for croniter"
 category = "main"
 optional = false
@@ -448,7 +448,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "cd40af3a776c83f2a4d7f19182556cbfc1b55a8043033f309ef9da7e21b07a5a"
+content-hash = "f34023a83358a5b5a85d3af00987e31c8bea55d0e8fcddbf1735c0f613279d8f"
 
 [metadata.files]
 aiohttp = []

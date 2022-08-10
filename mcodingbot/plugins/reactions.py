@@ -3,7 +3,7 @@ import re
 import crescent
 import hikari
 
-RUST_REGEX = re.compile(r"\brust\b", flags=re.I)
+RUST_REGEX = re.compile(r"(\brust\b|\bblazingly fast\b)", flags=re.I)
 
 plugin = crescent.Plugin("reactions")
 

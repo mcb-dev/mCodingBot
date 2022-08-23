@@ -15,7 +15,7 @@ hikari = "^2.0.0-alpha.108"
 hikari-crescent = "^0.2.4"
 
 [tool.poetry.dev-dependencies]
-nox = "^2022.1.7"
+nox = "^2022.8.7"
 flake8 = "^4.0.1"
 black = "^22.6.0"
 isort = "^5.10.1"

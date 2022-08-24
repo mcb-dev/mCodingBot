@@ -56,7 +56,7 @@ async def update_channels(bot: Bot) -> None:
             "Couldn't find mCoding guild, not updating member count."
         )
     guild_approx_members = guild.member_count
-    if guild_aprox_members is None:
+    if guild_approx_members is None:
         return LOGGER.warning("Cached guild has no aproximate member count.")
     cached_members = len(bot.cache.get_members_view_for_guild(guild.id))
 
@@ -64,7 +64,7 @@ async def update_channels(bot: Bot) -> None:
     # the guild being chuncked, which happens *after* startup. We can't
     # just rely on the aproximate_member_count though, because that is
     # never updated after the bot first starts.
-    member_count = max(guild_aprox_members, cached_members)
+    member_count = max(guild_approx_members, cached_members)
 
     await member_channel.edit(name=f"Members: {display_stats(member_count)}")
 

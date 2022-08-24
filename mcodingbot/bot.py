@@ -4,13 +4,19 @@ from typing import Any
 
 import aiohttp
 import crescent
+import hikari
 
 from mcodingbot.config import CONFIG
 
 
 class Bot(crescent.Bot):
     def __init__(self) -> None:
-        super().__init__(token=CONFIG.discord_token)
+        super().__init__(
+            token=CONFIG.discord_token,
+            intents=(
+                hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS
+            ),
+        )
 
         self.plugins.load_folder("mcodingbot.plugins")
         self.plugins.load_folder("mcodingbot.tasks")

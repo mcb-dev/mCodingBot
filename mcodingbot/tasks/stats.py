@@ -55,7 +55,7 @@ async def update_channels(bot: Bot) -> None:
         return LOGGER.warning(
             "Couldn't find mCoding guild, not updating member count."
         )
-    guild_aprox_members = guild.member_count
+    guild_approx_members = guild.member_count
     if guild_aprox_members is None:
         return LOGGER.warning("Cached guild has no aproximate member count.")
     cached_members = len(bot.cache.get_members_view_for_guild(guild.id))

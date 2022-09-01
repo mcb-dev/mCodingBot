@@ -17,7 +17,7 @@ hikari-crescent = "^0.2.4"
 [tool.poetry.dev-dependencies]
 nox = "^2022.1.7"
 flake8 = "^4.0.1"
-black = "^22.6.0"
+black = "^22.8.0"
 isort = "^5.10.1"
 mypy = "^0.961"
 

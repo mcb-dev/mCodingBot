@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from decimal import Decimal
 from math import log2
 from typing import TYPE_CHECKING, Any
 
@@ -121,6 +122,18 @@ async def get_stats(bot: Bot) -> Stats:
     return _last_known_stats
 
 
+def format_float(n: int | float) -> int | float:
+    if float(n).is_integer():
+        return int(n)
+    return n
+
+
+def floor(number: int | float, ndigits: int = 0) -> float:
+    n: int | float = 10 ** ndigits
+    return int(number * n) / n
+
+
+
 def display_stats(stat: int | float) -> str:
     if stat < 1_000:
         pretty_stat = stat
@@ -132,16 +145,10 @@ def display_stats(stat: int | float) -> str:
         pretty_stat = stat / 1_000_000
         unit = "M"
 
-    pretty_stat = int(pretty_stat * 100) / 100
-    exp_stat = int(log2(stat) * 10) / 10
+    pretty_stat = format_float(floor(pretty_stat, 2))
+    exp_stat = format_float(floor(log2(stat), 2))
     # ^ this might not be as accurate as the member count thing when
     # someone picky actually calculates it, but I suppose it's not
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"
-
-    if float(exp_stat).is_integer():
-        exp_stat = int(exp_stat)
-
-    if float(pretty_stat).is_integer():
-        pretty_stat = int(pretty_stat)
 
     return f"2**{exp_stat} ({pretty_stat}{unit})"

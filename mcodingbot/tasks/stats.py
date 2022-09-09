@@ -132,7 +132,7 @@ def display_stats(stat: int | float) -> str:
         pretty_stat = stat / 1_000_000
         unit = "M"
 
-    pretty_stat = round(pretty_stat, 2)
+    pretty_stat = int(pretty_stat * 100) / 100
     exp_stat = int(log2(stat) * 10) / 10
     # ^ this might not be as accurate as the member count thing when
     # someone picky actually calculates it, but I suppose it's not

@@ -128,9 +128,8 @@ def format_float(n: int | float) -> int | float:
 
 
 def floor(number: int | float, ndigits: int = 0) -> float:
-    n: int | float = 10 ** ndigits
+    n: int | float = 10**ndigits
     return int(number * n) / n
-
 
 
 def display_stats(stat: int | float) -> str:

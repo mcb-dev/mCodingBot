@@ -1,0 +1,10 @@
+CREATE TABLE users ();
+CREATE TABLE _migrations ();
+ALTER TABLE users ADD COLUMN user_id NUMERIC;
+ALTER TABLE users ADD COLUMN is_donor BOOLEAN;
+ALTER TABLE _migrations ADD COLUMN id_ INTEGER;
+ALTER TABLE users ALTER COLUMN user_id SET NOT NULL;
+ALTER TABLE users ALTER COLUMN is_donor SET NOT NULL;
+ALTER TABLE _migrations ALTER COLUMN id_ SET NOT NULL;
+ALTER TABLE users ADD CONSTRAINT _users_user_id_primary_key PRIMARY KEY ( user_id );
+ALTER TABLE _migrations ADD CONSTRAINT __migrations_id__primary_key PRIMARY KEY ( id_ );

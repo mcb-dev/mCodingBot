@@ -7,6 +7,7 @@ import crescent
 import hikari
 
 from mcodingbot.config import CONFIG
+from mcodingbot.database.database import Database
 
 
 class Bot(crescent.Bot):
@@ -22,6 +23,7 @@ class Bot(crescent.Bot):
         self.plugins.load_folder("mcodingbot.tasks")
 
         self._session: aiohttp.ClientSession | None = None
+        self._db: Database | None = None
 
     @property
     def session(self) -> aiohttp.ClientSession:
@@ -29,8 +31,16 @@ class Bot(crescent.Bot):
             raise AttributeError("Session has not been set yet.")
         return self._session
 
+    @property
+    def db(self) -> Database:
+        if not self._db:
+            raise AttributeError("Database has not been set yet.")
+        return self._db
+
     async def start(self, *args: Any, **kwargs: Any) -> None:
         self._session = aiohttp.ClientSession()
+        self._db = await Database.create()
+
         await super().start(*args, **kwargs)
 
     async def join(self, *args: Any, **kwargs: Any) -> None:

@@ -6,11 +6,13 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, cast
 
-_ALWAYS_SAVE = ["discord_token"]
+_ALWAYS_SAVE = {"discord_token", "db_password"}
 
 
 @dataclass
 class Config:
+    db_password: str = "DATABASE_PASSWORD"
+
     discord_token: str = "DISCORD_TOKEN"
     theme: int = 0x0B7CD3
 
@@ -18,6 +20,8 @@ class Config:
     sub_count_channel: int = -1
     view_count_channel: int = -1
     member_count_channel: int = -1
+    patron_role: int = -1
+    donor_role: int = -1
 
     mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
     yt_api_key: str = "YOUTUBE_API_KEY"

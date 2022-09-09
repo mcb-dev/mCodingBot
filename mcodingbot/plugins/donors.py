@@ -47,10 +47,15 @@ async def on_member_update(event: hikari.MemberUpdateEvent) -> None:
 @plugin.include
 @tasks.loop(hours=1)
 async def add_donor_role() -> None:
+    role_add_tasks: list[asyncio.Task[None]] = []
     for member in plugin.app.cache.get_members_view_for_guild(
         CONFIG.mcoding_server
     ).values():
-        await _give_donor_role_if_donor(member)
+        role_add_tasks.append(
+            asyncio.create_task(_give_donor_role_if_donor(member))
+        )
+
+    await asyncio.gather(*role_add_tasks)
 
 
 async def _give_donor_role_if_donor(member: hikari.Member) -> None:

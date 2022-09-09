@@ -5,7 +5,7 @@ from decimal import Decimal
 from apgorm import Converter
 
 
-class NumericC(Converter[Decimal, int]):
+class NumericConverter(Converter[Decimal, int]):
     def from_stored(self, value: Decimal) -> int:
         return int(value)
 

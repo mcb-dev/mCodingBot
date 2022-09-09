@@ -3,11 +3,11 @@ from __future__ import annotations
 from apgorm import Model, types
 from asyncpg.exceptions import UniqueViolationError
 
-from mcodingbot.database.converters import NumericC
+from mcodingbot.database.converters import NumericConverter
 
 
 class User(Model):
-    user_id = types.Numeric().field().with_converter(NumericC)
+    user_id = types.Numeric().field().with_converter(NumericConverter)
     is_donor = types.Boolean().field(default=False)
 
     primary_key = (user_id,)

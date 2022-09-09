@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-import typing
+from typing import TYPE_CHECKING, Sequence, cast
 
 import crescent
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from mcodingbot.bot import Bot
 
-__all__: typing.Sequence[str] = ("Plugin",)
+__all__: Sequence[str] = ("Plugin",)
 
 
 class Plugin(crescent.Plugin):
     @property
     def app(self) -> Bot:
-        return typing.cast("Bot", super().app)
+        return cast("Bot", super().app)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from math import log
+from math import log2
 from typing import TYPE_CHECKING, Any
 
 from crescent.ext import tasks
@@ -46,7 +46,6 @@ async def update_channels(bot: Bot) -> None:
     else:
         LOGGER.warning("No view count channel to update stats for.")
 
-    # get the member count
     if not member_channel:
         return LOGGER.warning("No member count channel to update stats for.")
 
@@ -122,27 +121,32 @@ async def get_stats(bot: Bot) -> Stats:
     return _last_known_stats
 
 
+def strip_trailing_zeros(n: int | float) -> int | float:
+    if float(n).is_integer():
+        return int(n)
+    return n
+
+
+def truncate_decimals(number: int | float, ndigits: int = 0) -> float:
+    n: int | float = 10**ndigits
+    return int(number * n) / n
+
+
 def display_stats(stat: int | float) -> str:
-    if stat < 10**3:
+    if stat < 1_000:
         pretty_stat = stat
         unit = ""
-    elif stat < 10**6:
-        pretty_stat = stat / 10**3
+    elif stat < 1_000_000:
+        pretty_stat = stat / 1_000
         unit = "K"
     else:
-        pretty_stat = stat / 10**6
+        pretty_stat = stat / 1_000_000
         unit = "M"
 
-    pretty_stat = round(pretty_stat, 2)
-    exp_stat = round(log(stat, 2), 1)
+    pretty_stat = strip_trailing_zeros(truncate_decimals(pretty_stat, 2))
+    exp_stat = strip_trailing_zeros(truncate_decimals(log2(stat), 2))
     # ^ this might not be as accurate as the member count thing when
     # someone picky actually calculates it, but I suppose it's not
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"
-
-    if float(exp_stat).is_integer():
-        exp_stat = int(exp_stat)
-
-    if float(pretty_stat).is_integer():
-        pretty_stat = int(pretty_stat)
 
     return f"2**{exp_stat} ({pretty_stat}{unit})"

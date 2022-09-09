@@ -46,7 +46,6 @@ async def update_channels(bot: Bot) -> None:
     else:
         LOGGER.warning("No view count channel to update stats for.")
 
-    # get the member count
     if not member_channel:
         return LOGGER.warning("No member count channel to update stats for.")
 

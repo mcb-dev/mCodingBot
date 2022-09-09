@@ -8,7 +8,6 @@ from mcodingbot.database.converters import NumericC
 
 class User(Model):
     user_id = types.Numeric().field().with_converter(NumericC)
-
     is_donor = types.Boolean().field(default=False)
 
     primary_key = (user_id,)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import Any
 
 import aiohttp
@@ -9,8 +8,6 @@ import hikari
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.database import Database
-
-LOGGER = logging.getLogger(__name__)
 
 
 class Bot(crescent.Bot):

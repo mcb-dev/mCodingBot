@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from math import log
+from math import log2
 from typing import TYPE_CHECKING, Any
 
 from crescent.ext import tasks
@@ -133,7 +133,7 @@ def display_stats(stat: int | float) -> str:
         unit = "M"
 
     pretty_stat = round(pretty_stat, 2)
-    exp_stat = round(log(stat, 2), 1)
+    exp_stat = int(log2(stat) * 10) / 10
     # ^ this might not be as accurate as the member count thing when
     # someone picky actually calculates it, but I suppose it's not
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"

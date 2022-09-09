@@ -9,19 +9,19 @@ def mypy(session: nox.Session) -> None:
     session.run("mypy", ".")
 
 
-@nox.session
-def flake8(session: nox.Session) -> None:
-    session.install("flake8")
-    session.run("flake8")
-
-
-@nox.session
-def black(session: nox.Session) -> None:
+@nox.session(name="apply-lint")
+def apply_lint(session: nox.Session) -> None:
     session.install("black")
-    session.run("black", ".", "--check")
+    session.install("isort")
+    session.run("black", ".")
+    session.run("isort", ".")
 
 
 @nox.session
-def isort(session: nox.Session) -> None:
+def lint(session: nox.Session) -> None:
+    session.install("black")
+    session.install("flake8")
     session.install("isort")
+    session.run("black", ".", "--check")
+    session.run("flake8")
     session.run("isort", ".", "--check")

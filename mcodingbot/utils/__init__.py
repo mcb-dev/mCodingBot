@@ -1,5 +1,5 @@
-import typing
+from typing import Sequence
 
 from mcodingbot.utils.plugin import Plugin
 
-__all__: typing.Sequence[str] = ("Plugin",)
+__all__: Sequence[str] = ("Plugin",)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import cast, Sequence, TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence, cast
 
 import crescent
 

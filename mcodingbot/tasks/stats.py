@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from decimal import Decimal
 from math import log2
 from typing import TYPE_CHECKING, Any
 

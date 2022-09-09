@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, cast
 
-_ALWAYS_SAVE = ["discord_token", "db_password"]
+_ALWAYS_SAVE = {"discord_token", "db_password"}
 
 
 @dataclass

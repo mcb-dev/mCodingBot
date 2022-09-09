@@ -5,7 +5,7 @@ import hikari
 
 from mcodingbot.utils import Plugin
 
-RUST_REGEX = re.compile(r"\brust\b", flags=re.I)
+RUST_REGEX = re.compile(r"(\brust\b|\bblazingly\s+fast\b)", flags=re.I)
 
 plugin = Plugin()
 

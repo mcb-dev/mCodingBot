@@ -122,14 +122,14 @@ async def get_stats(bot: Bot) -> Stats:
 
 
 def display_stats(stat: int | float) -> str:
-    if stat < 10**3:
+    if stat < 1_000:
         pretty_stat = stat
         unit = ""
-    elif stat < 10**6:
-        pretty_stat = stat / 10**3
+    elif stat < 1_000_000:
+        pretty_stat = stat / 1_000
         unit = "K"
     else:
-        pretty_stat = stat / 10**6
+        pretty_stat = stat / 1_000_000
         unit = "M"
 
     pretty_stat = round(pretty_stat, 2)

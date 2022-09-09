@@ -48,11 +48,11 @@ class Config:
         pth = Path("config.json")
 
         if not pth.exists():
-            c = Config()
+            c = cls()
         else:
             keys = set(inspect.signature(Config).parameters)
             with pth.open("r") as f:
-                c = Config(
+                c = cls(
                     **{
                         k: v
                         for k, v in cast(

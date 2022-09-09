@@ -31,7 +31,7 @@ class Config:
 
         dct = asdict(self)
         tosave: Dict[str, Any] = {}
-        defaults = self.__class__()
+        defaults = type(self)()
         for k, v in dct.items():
             if k not in _ALWAYS_SAVE and getattr(defaults, k) == v:
                 continue

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import crescent
 import hikari
@@ -37,15 +38,12 @@ class SetDonorStatus:
         )
 
 
-# if a member receives the patron role (from the Patreon bot), also
-# give them the donor role.
 @plugin.include
 @crescent.event
 async def on_member_update(event: hikari.MemberUpdateEvent) -> None:
     await _give_donor_role_if_donor(event.member)
 
 
-# loop over members and give them the donor role if they deserve it
 @plugin.include
 @tasks.loop(hours=1)
 async def add_donor_role() -> None:

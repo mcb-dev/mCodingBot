@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TypeVar
 
 import apgorm
 
@@ -8,14 +9,15 @@ from mcodingbot.config import CONFIG
 from mcodingbot.database.models.user import User
 
 LOGGER = logging.getLogger(__name__)
+_SELF = TypeVar("_SELF", bound="Database")
 
 
 class Database(apgorm.Database):
     users = User
 
-    @staticmethod
-    async def create() -> Database:
-        db = Database("mcodingbot/database/migrations")
+    @classmethod
+    async def create(cls: type[_SELF]) -> _SELF:
+        db = cls("mcodingbot/database/migrations")
         await db.connect(
             host="localhost",
             database="mcodingbot",

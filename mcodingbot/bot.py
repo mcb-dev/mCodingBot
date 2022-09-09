@@ -42,20 +42,7 @@ class Bot(crescent.Bot):
 
     async def start(self, *args: Any, **kwargs: Any) -> None:
         self._session = aiohttp.ClientSession()
-
-        self._db = Database("mcodingbot/database/migrations")
-        await self.db.connect(
-            host="localhost",
-            database="mcodingbot",
-            user="mcodingbot",
-            password=CONFIG.db_password,
-        )
-        if self.db.must_create_migrations():
-            LOGGER.info("Creating migrations...")
-            self.db.create_migrations()
-        if await self.db.must_apply_migrations():
-            LOGGER.info("Applying migrations...")
-            await self.db.apply_migrations()
+        self._db = await Database.create()
 
         await super().start(*args, **kwargs)
 

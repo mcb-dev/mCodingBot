@@ -40,7 +40,7 @@ class Config:
 
             tosave[k] = v
 
-        with pth.open("w+") as f:
+        with pth.open("w") as f:
             json.dump(tosave, f, indent=4)
 
     @classmethod

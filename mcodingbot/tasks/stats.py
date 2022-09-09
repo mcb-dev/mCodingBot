@@ -121,7 +121,7 @@ async def get_stats(bot: Bot) -> Stats:
     return _last_known_stats
 
 
-def format_float(n: int | float) -> int | float:
+def strip_trailing_zeros(n: int | float) -> int | float:
     if float(n).is_integer():
         return int(n)
     return n
@@ -143,8 +143,8 @@ def display_stats(stat: int | float) -> str:
         pretty_stat = stat / 1_000_000
         unit = "M"
 
-    pretty_stat = format_float(truncate_decimals(pretty_stat, 2))
-    exp_stat = format_float(truncate_decimals(log2(stat), 2))
+    pretty_stat = strip_trailing_zeros(truncate_decimals(pretty_stat, 2))
+    exp_stat = strip_trailing_zeros(truncate_decimals(log2(stat), 2))
     # ^ this might not be as accurate as the member count thing when
     # someone picky actually calculates it, but I suppose it's not
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"

@@ -74,8 +74,8 @@ class JokeFactory:
 
 # Add the command to the plugin class
 @plugin.include
-# Create a command
-@crescent.command
+# Create a command with the name joke
+@crescent.command(name="joke")
 class Joke:
     # respond to the command
     async def callback(self, ctx: crescent.Context) -> None:

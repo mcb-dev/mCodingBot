@@ -1,3 +1,4 @@
 {
+    "db_password": "DATABASE-PASSWORD",
     "discord_token": "DISCORD-TOKEN"
 }

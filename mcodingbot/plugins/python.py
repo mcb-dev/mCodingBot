@@ -13,7 +13,7 @@ PEP_REGEX = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
 
 
-def encode_dismiss_button_id(id: hikari.Snowflake):
+def encode_dismiss_button_id(id: hikari.Snowflake) -> str:
     return f"{DISMISS_BUTTON_ID}:{id}"
 
 
@@ -21,7 +21,7 @@ def decode_dismiss_button_id(dismiss_button_id: str) -> hikari.Snowflake:
     return hikari.Snowflake(dismiss_button_id.split(":")[1])
 
 
-def get_dismiss_button(id: hikari.Snowflake) -> hikari.impl.CommandBuilder:
+def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
     action_row = plugin.app.rest.build_action_row()
     action_row.add_button(
         hikari.ButtonStyle.DANGER,
@@ -71,7 +71,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
 
 @plugin.include
 @crescent.event
-async def on_interaction(event: hikari.InteractionCreateEvent):
+async def on_interaction(event: hikari.InteractionCreateEvent) -> None:
     inter = event.interaction
 
     if (
@@ -83,7 +83,7 @@ async def on_interaction(event: hikari.InteractionCreateEvent):
     id = decode_dismiss_button_id(inter.custom_id)
 
     if inter.user.id != id:
-        await event.interaction.create_initial_response(
+        await inter.create_initial_response(
             hikari.ResponseType.MESSAGE_CREATE,
             "Only the original message's author can dismiss this message.",
             flags=hikari.MessageFlag.EPHEMERAL,

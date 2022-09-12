@@ -10,10 +10,6 @@ plugin = Plugin()
 pep_regex = re.compile(r"pep *\d{1,4}", re.IGNORECASE)
 
 
-def extract_pep_number(ref: str) -> int:
-    return int(ref.casefold()[3:].strip())
-
-
 def get_pep_link(pep_number: int) -> str:
     return f"<https://peps.python.org/pep-{pep_number:04}/>"
 
@@ -30,22 +26,24 @@ class PEPCommand:
 @plugin.include
 @crescent.event
 async def on_message(event: hikari.MessageCreateEvent) -> None:
-    if event.message.content is not None:
-        pep_refs = [
-            extract_pep_number(ref.group())
-            for ref in re.finditer(pep_regex, event.message.content)
+    if event.message.content is None or event.author.is_bot:
+        return
+
+    pep_refs = [
+        int(ref.groupdict()["pep"])
+        for ref in re.finditer(pep_regex, event.message.content)
+    ]
+
+    if not pep_refs:
+        return
+
+    pep_links_message = "\n".join(
+        [
+            f"PEP {pep_number}: {pep_link}"
+            for pep_number, pep_link in zip(
+                pep_refs, map(get_pep_link, pep_refs)
+            )
         ]
+    )
 
-        if not pep_refs:
-            return
-
-        pep_links_message = "\n".join(
-            [
-                f"PEP {pep_number}: {pep_link}"
-                for pep_number, pep_link in zip(
-                    pep_refs, map(get_pep_link, pep_refs)
-                )
-            ]
-        )
-
-        await event.message.respond(pep_links_message)
+    await event.message.respond(pep_links_message)

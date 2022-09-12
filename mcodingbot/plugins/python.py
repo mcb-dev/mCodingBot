@@ -14,14 +14,20 @@ PEP_REGEX = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
 
 
-def get_dismiss_button() -> hikari.impl.ActionRowBuilder:
+def encode_dismiss_button_id(id: hikari.Snowflake):
+    return f"{DISMISS_BUTTON_ID}:{id}"
+
+
+def decode_dismiss_button_id(dismiss_button_id: str) -> hikari.Snowflake:
+    return hikari.Snowflake(dismiss_button_id.split(":")[1])
+
+
+def get_dismiss_button(id: hikari.Snowflake) -> hikari.impl.ActionRowBuilder:
     action_row = hikari.impl.ActionRowBuilder()
-    button = action_row.add_button(
+    action_row.add_button(
         hikari.ButtonStyle.DANGER,
-        DISMISS_BUTTON_ID,
-    )
-    button.set_label("Dismiss")
-    button.add_to_container()
+        decode_dismiss_button_id(id),
+    ).set_label("Dismiss").add_to_container()
     return action_row
 
 
@@ -61,16 +67,30 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for pep_number in pep_refs
     )
 
-    await event.message.respond(pep_links_message, reply=True, component=get_dismiss_button())
+    await event.message.respond(pep_links_message, reply=True, component=get_dismiss_button(event.author.id))
 
 
 @plugin.include
 @crescent.event
 async def on_interaction(event: hikari.InteractionCreateEvent):
+    inter = event.interaction
+
     if (
-        not isinstance(event.interaction, hikari.ComponentInteraction)
-        or event.interaction.custom_id != DISMISS_BUTTON_ID
+        not isinstance(inter, hikari.ComponentInteraction)
+        or DISMISS_BUTTON_ID not in inter.custom_id
     ):
         return
 
-    await event.interaction.message.delete()
+    print(inter.custom_id)
+
+    id = encode_dismiss_button_id(inter.custom_id)
+
+    if inter.user.id == id:
+        await event.interaction.create_initial_response(
+            hikari.ResponseType.MESSAGE_CREATE,
+            "Only the original message's author can dismiss this message.",
+            flags=hikari.MessageFlag.EPHEMERAL,
+        )
+        return
+
+    await inter.message.delete()

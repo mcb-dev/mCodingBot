@@ -2,7 +2,6 @@ import re
 
 import crescent
 import hikari
-import hikari.impl
 
 from mcodingbot.utils import Plugin
 
@@ -22,8 +21,8 @@ def decode_dismiss_button_id(dismiss_button_id: str) -> hikari.Snowflake:
     return hikari.Snowflake(dismiss_button_id.split(":")[1])
 
 
-def get_dismiss_button(id: hikari.Snowflake) -> hikari.impl.ActionRowBuilder:
-    action_row = hikari.impl.ActionRowBuilder()
+def get_dismiss_button(id: hikari.Snowflake) -> hikari.impl.CommandBuilder:
+    action_row = plugin.app.rest.build_action_row()
     action_row.add_button(
         hikari.ButtonStyle.DANGER,
         encode_dismiss_button_id(id),

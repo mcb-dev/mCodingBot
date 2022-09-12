@@ -20,11 +20,7 @@ def get_pep_link(pep_number: int) -> str:
 )
 class PEPCommand:
     pep_number = crescent.option(
-        int, 
-        "The PEP number.", 
-        name="pep-number", 
-        min_value=0, 
-        max_value=9999, 
+        int, "The PEP number.", name="pep-number", min_value=0, max_value=9999
     )
 
     async def callback(self, ctx: crescent.Context) -> None:

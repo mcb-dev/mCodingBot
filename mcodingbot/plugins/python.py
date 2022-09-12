@@ -42,4 +42,4 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for pep_number in pep_refs
     )
 
-    await event.message.respond(pep_links_message)
+    await event.message.respond(pep_links_message, reply=True)

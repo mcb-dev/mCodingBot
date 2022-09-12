@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import hikari
 import crescent
+import hikari
 
 from mcodingbot.config import CONFIG
 

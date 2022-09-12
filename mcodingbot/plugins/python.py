@@ -38,10 +38,8 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         return
 
     pep_links_message = "\n".join(
-        [
-            f"PEP {pep_number}: {get_pep_link(pep_number)}"
-            for pep_number in pep_refs
-        ]
+        f"PEP {pep_number}: {get_pep_link(pep_number)}"
+        for pep_number in pep_refs
     )
 
     await event.message.respond(pep_links_message)

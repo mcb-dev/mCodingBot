@@ -89,7 +89,7 @@ async def on_interaction(event: hikari.InteractionCreateEvent) -> None:
     if inter.user.id != decode_dismiss_button_id(inter.custom_id):
         await inter.create_initial_response(
             hikari.ResponseType.MESSAGE_CREATE,
-            "Only the original message's author can dismiss this message.",
+            "Only the person who triggered this message can dismiss it.",
             flags=hikari.MessageFlag.EPHEMERAL,
         )
         return

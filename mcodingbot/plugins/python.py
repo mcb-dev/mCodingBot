@@ -15,7 +15,7 @@ def get_pep_link(pep_number: int) -> str:
 
 
 @plugin.include
-@crescent.command(name="pep", description="Find a Python Enhancement Proposal")
+@crescent.command(name="pep", description="Find a Python Enhancement Proposal.")
 class PEPCommand:
     pep_number = crescent.option(int, "the PEP number")
 
@@ -26,7 +26,7 @@ class PEPCommand:
 @plugin.include
 @crescent.event
 async def on_message(event: hikari.MessageCreateEvent) -> None:
-    if event.message.content is None or event.author.is_bot:
+    if not event.message.content or event.author.is_bot:
         return
 
     pep_refs = [

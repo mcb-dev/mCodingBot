@@ -26,7 +26,7 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.impl.ActionRowBuilder:
     action_row = hikari.impl.ActionRowBuilder()
     action_row.add_button(
         hikari.ButtonStyle.DANGER,
-        decode_dismiss_button_id(id),
+        encode_dismiss_button_id(id),
     ).set_label("Dismiss").add_to_container()
     return action_row
 
@@ -81,9 +81,7 @@ async def on_interaction(event: hikari.InteractionCreateEvent):
     ):
         return
 
-    print(inter.custom_id)
-
-    id = encode_dismiss_button_id(inter.custom_id)
+    id = decode_dismiss_button_id(inter.custom_id)
 
     if inter.user.id != id:
         await event.interaction.create_initial_response(

@@ -15,7 +15,7 @@ def extract_pep_number(ref: str) -> int:
 
 
 def get_pep_link(pep_number: int) -> str:
-    return f"<https://peps.python.org/pep-{pep_number:03}/>"
+    return f"<https://peps.python.org/pep-{pep_number:04}/>"
 
 
 @plugin.include

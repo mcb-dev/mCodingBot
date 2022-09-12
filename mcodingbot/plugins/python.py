@@ -7,7 +7,7 @@ from mcodingbot.utils import Plugin
 
 plugin = Plugin()
 
-PEP_REGEX = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
+PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d+)", re.IGNORECASE)
 
 
 def get_pep_link(pep_number: int) -> str:

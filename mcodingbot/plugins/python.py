@@ -23,13 +23,13 @@ class PEPCommand:
     pep_number = crescent.option(
         int, "The PEP number.", name="pep-number", min_value=0, max_value=9999
     )
-    hide_embed = crescent.option(
-        bool, "Whether to hide the embed.", name="hide-embed", default=False
+    show_embed = crescent.option(
+        bool, "Whether to show the embed.", name="show-embed", default=True
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(
-            get_pep_link(self.pep_number, hide_embed=self.hide_embed)
+            get_pep_link(self.pep_number, hide_embed=not self.show_embed)
         )
 
 

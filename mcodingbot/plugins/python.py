@@ -2,12 +2,27 @@ import re
 
 import crescent
 import hikari
+import hikari.impl
 
 from mcodingbot.utils import Plugin
 
 plugin = Plugin()
 
 PEP_REGEX = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
+
+
+DISMISS_BUTTON_ID = "dismiss"
+
+
+def get_dismiss_button() -> hikari.impl.ActionRowBuilder:
+    action_row = hikari.impl.ActionRowBuilder()
+    button = action_row.add_button(
+        hikari.ButtonStyle.DANGER,
+        DISMISS_BUTTON_ID,
+    )
+    button.set_label("Dismiss")
+    button.add_to_container()
+    return action_row
 
 
 def get_pep_link(pep_number: int) -> str:
@@ -46,4 +61,16 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for pep_number in pep_refs
     )
 
-    await event.message.respond(pep_links_message, reply=True)
+    await event.message.respond(pep_links_message, reply=True, component=get_dismiss_button())
+
+
+@plugin.include
+@crescent.event
+async def on_interaction(event: hikari.InteractionCreateEvent):
+    if (
+        not isinstance(event.interaction, hikari.ComponentInteraction)
+        or event.interaction.custom_id != DISMISS_BUTTON_ID
+    ):
+        return
+
+    await event.interaction.message.delete()

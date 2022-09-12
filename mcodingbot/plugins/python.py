@@ -31,7 +31,7 @@ class PEPCommand:
 @crescent.event
 async def on_message(event: hikari.MessageCreateEvent) -> None:
     if event.message.content is not None:
-        pep_refs: list[int] = [
+        pep_refs = [
             extract_pep_number(ref.group())
             for ref in re.finditer(pep_regex, event.message.content)
         ]
@@ -39,7 +39,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         if not pep_refs:
             return
 
-        pep_links_message: str = "\n".join(
+        pep_links_message = "\n".join(
             [
                 f"PEP {pep_number}: {pep_link}"
                 for pep_number, pep_link in zip(

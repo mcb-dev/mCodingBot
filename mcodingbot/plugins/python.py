@@ -11,7 +11,7 @@ pep_regex = re.compile(r"pep *\d{1,4}", re.IGNORECASE)
 
 
 def extract_pep_number(ref: str) -> int:
-    return int(ref.casefold().removeprefix("pep").strip())
+    return int(ref.casefold()[3:].strip())
 
 
 def get_pep_link(pep_number: int) -> str:

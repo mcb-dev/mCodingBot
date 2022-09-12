@@ -12,7 +12,7 @@ plugin = crescent.Plugin()
 @crescent.command(
     name="restart",
     description="Restarts the bot.",
-    default_member_permissions=hikari.Permissions.MODERATE_MEMBERS,
+    default_member_permissions=hikari.Permissions.ADMINISTRATOR,
     dm_enabled=False,
     guild=CONFIG.mcoding_server,
 )

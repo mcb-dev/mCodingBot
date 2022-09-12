@@ -15,7 +15,9 @@ def get_pep_link(pep_number: int) -> str:
 
 
 @plugin.include
-@crescent.command(name="pep", description="Find a Python Enhancement Proposal.")
+@crescent.command(
+    name="pep", description="Find a Python Enhancement Proposal."
+)
 class PEPCommand:
     pep_number = crescent.option(int, "the PEP number")
 

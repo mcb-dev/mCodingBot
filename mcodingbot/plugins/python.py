@@ -7,7 +7,7 @@ from mcodingbot.utils import Plugin
 
 plugin = Plugin()
 
-PEP_REGEX = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
+PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 
 
 DISMISS_BUTTON_ID = "dismiss"
@@ -63,13 +63,18 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for ref in re.finditer(PEP_REGEX, event.message.content)
     ]
 
+    pep_refs = sorted(set(pep_refs))
+
     if not pep_refs:
         return
 
     pep_links_message = "\n".join(
         f"PEP {pep_number}: {get_pep_link(pep_number, hide_embed=True)}"
-        for pep_number in pep_refs
+        for pep_number in pep_refs[:5]
     )
+
+    if (peps := len(pep_refs)) > 5:
+        pep_links_message += f"\n({peps - 5} PEPs omitted)"
 
     await event.message.respond(
         pep_links_message,

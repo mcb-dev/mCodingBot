@@ -7,7 +7,7 @@ from mcodingbot.utils import Plugin
 
 plugin = Plugin()
 
-PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d+)", re.IGNORECASE)
+PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 
 
 def get_pep_link(pep_number: int) -> str:
@@ -38,7 +38,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for ref in re.finditer(PEP_REGEX, event.message.content)
     ]
 
-    pep_refs = sorted({ref for ref in pep_refs if ref < 10000})
+    pep_refs = sorted(set(pep_refs))
 
     if not pep_refs:
         return

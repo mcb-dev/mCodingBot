@@ -38,7 +38,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for ref in re.finditer(PEP_REGEX, event.message.content)
     ]
 
-    pep_refs = sorted(set(filter(lambda x: x < 10000, pep_refs)))
+    pep_refs = sorted({ref for ref in pep_refs if ref < 10000})
 
     if not pep_refs:
         return

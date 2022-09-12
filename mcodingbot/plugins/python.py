@@ -10,7 +10,7 @@ plugin = Plugin()
 PEP_REGEX = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
 
 
-def get_pep_link(pep_number: int, hide_embed: bool) -> str:
+def get_pep_link(pep_number: int, *, hide_embed: bool) -> str:
     url = f"https://peps.python.org/pep-{pep_number:04}/"
     return f"<{url}>" if hide_embed else url
 

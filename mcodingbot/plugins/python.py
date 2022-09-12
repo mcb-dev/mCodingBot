@@ -74,9 +74,9 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
 async def on_interaction(event: hikari.InteractionCreateEvent) -> None:
     inter = event.interaction
 
-    if (
-        not isinstance(inter, hikari.ComponentInteraction)
-        or DISMISS_BUTTON_ID not in inter.custom_id
+    if not (
+        isinstance(inter, hikari.ComponentInteraction)
+        or DISMISS_BUTTON_ID in inter.custom_id
     ):
         return
 

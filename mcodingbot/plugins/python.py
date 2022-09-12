@@ -19,7 +19,13 @@ def get_pep_link(pep_number: int) -> str:
     name="pep", description="Find a Python Enhancement Proposal."
 )
 class PEPCommand:
-    pep_number = crescent.option(int, "the PEP number")
+    pep_number = crescent.option(
+        int, 
+        "The PEP number.", 
+        name="pep-number", 
+        min_value=0, 
+        max_value=9999, 
+    )
 
     async def callback(self, ctx: crescent.Context) -> None:
         await ctx.respond(get_pep_link(self.pep_number))

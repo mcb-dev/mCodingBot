@@ -7,7 +7,7 @@ from mcodingbot.utils import Plugin
 
 plugin = Plugin()
 
-pep_regex = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
+PEP_REGEX = re.compile(r"pep *(?P<pep>\d{1,4})", re.IGNORECASE)
 
 
 def get_pep_link(pep_number: int) -> str:
@@ -31,7 +31,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
 
     pep_refs = [
         int(ref.groupdict()["pep"])
-        for ref in re.finditer(pep_regex, event.message.content)
+        for ref in re.finditer(PEP_REGEX, event.message.content)
     ]
 
     if not pep_refs:

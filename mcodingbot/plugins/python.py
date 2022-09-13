@@ -8,7 +8,7 @@ from mcodingbot.utils import PepManager, Plugin
 
 class PepPlugin(Plugin):
     def __init__(self) -> None:
-        self.peps = PepManager(self.app)
+        self.peps = PepManager()
         super().__init__()
 
 
@@ -86,7 +86,11 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
     if (pep_number := len(pep_refs)) > 5:
         pep_links_message += f"\n({pep_number - 5} PEPs omitted)"
 
-    await event.message.respond(pep_links_message, reply=True)
+    await event.message.respond(
+        pep_links_message,
+        component=get_dismiss_button(event.author.id),
+        reply=True
+    )
 
 
 @plugin.include

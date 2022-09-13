@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 _LOG = getLogger(__name__)
 
-__all__: Sequence[str] = ("PepManager", "Pep")
+__all__: Sequence[str] = ("PEPManager", "PEPInfo")
 
 
 class PEPManager:

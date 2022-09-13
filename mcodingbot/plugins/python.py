@@ -31,7 +31,7 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
 
 
 @plugin.include
-@tasks.loop(hours=1)
+@tasks.cronjob("@daily")
 async def update_peps() -> None:
     await PEP_MANAGER.fetch_pep_info(plugin.app)
 

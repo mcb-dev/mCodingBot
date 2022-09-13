@@ -4,13 +4,13 @@ import crescent
 import hikari
 from crescent.ext import tasks
 
-from mcodingbot.utils import PepManager, Plugin
+from mcodingbot.utils import PEPManager, Plugin
 
 plugin = Plugin()
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
-PEP_MANAGER = PepManager()
+PEP_MANAGER = PEPManager()
 
 
 def encode_dismiss_button_id(id: hikari.Snowflake) -> str:

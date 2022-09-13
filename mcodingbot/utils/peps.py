@@ -14,9 +14,9 @@ _LOG = getLogger(__name__)
 __all__: Sequence[str] = ("PepManager", "Pep")
 
 
-class PepManager:
+class PEPManager:
     def __init__(self) -> None:
-        self._peps: dict[int, Pep] = {}
+        self._peps: dict[int, PEPInfo] = {}
 
     async def fetch_pep_info(self, bot: Bot) -> None:
         async with bot.session.get(
@@ -28,7 +28,7 @@ class PepManager:
                 _LOG.exception("Could not fetch peps.")
             else:
                 self._peps = {
-                    int(pep_id): Pep(
+                    int(pep_id): PEPInfo(
                         number=int(pep_id),
                         title=pep["title"],
                         authors=pep["authors"],
@@ -37,12 +37,12 @@ class PepManager:
                     for pep_id, pep in (await resp.json()).items()
                 }
 
-    def get(self, pep_number: int) -> Pep | None:
+    def get(self, pep_number: int) -> PEPInfo | None:
         return self._peps.get(pep_number)
 
 
 @dataclasses.dataclass
-class Pep:
+class PEPInfo:
     number: int
     title: str
     authors: str

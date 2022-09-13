@@ -50,7 +50,7 @@ class PEPCommand:
     async def callback(self, ctx: crescent.Context) -> None:
         if not (pep := PEP_MANAGER.get(self.pep_number)):
             await ctx.respond(
-                f"{self.pep_number} is not a valid pep.", ephemeral=True
+                f"{self.pep_number} is not a valid PEP.", ephemeral=True
             )
             return
 

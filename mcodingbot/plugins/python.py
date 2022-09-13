@@ -68,13 +68,11 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for ref in re.finditer(PEP_REGEX, event.message.content)
     ]
 
-    pep_refs = sorted(set(pep_refs))[:5]
+    peps = map(PEP_MANAGER.get, sorted(set(pep_refs))[:5])
+    pep_links_message = "\n".join(str(pep) for pep in peps if pep if pep)
 
-    if not pep_refs:
+    if not pep_links_message:
         return
-
-    peps = (PEP_MANAGER.get(pep_number) for pep_number in pep_refs)
-    pep_links_message = "\n".join(str(pep) for pep in peps if pep)
 
     if (pep_number := len(pep_refs)) > 5:
         pep_links_message += f"\n({pep_number - 5} PEPs omitted)"

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import aiohttp
 

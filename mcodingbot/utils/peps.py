@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import dataclasses
+from dataclasses import dataclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Sequence
 
@@ -44,7 +44,7 @@ class PEPManager:
         return self._peps.get(pep_number)
 
 
-@dataclasses.dataclass
+@dataclass
 class PEPInfo:
     number: int
     title: str

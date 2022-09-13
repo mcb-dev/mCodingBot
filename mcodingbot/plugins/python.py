@@ -51,7 +51,7 @@ class PEPCommand:
     async def callback(self, ctx: crescent.Context) -> None:
         if not (pep := PEP_MANAGER.get(self.pep_number)):
             await ctx.respond(
-                f"{self.pep_number} is not a valid pep.", ephemeral=True
+                f"{self.pep_number} is not a valid PEP.", ephemeral=True
             )
             return
 
@@ -77,8 +77,8 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
 
     embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
 
-    if (pep_number := len(pep_refs)) > 5:
-        embed.set_footer(f"{pep_number - 5} PEPs omitted")
+    if (pep_count := len(pep_refs)) > 5:
+        embed.set_footer(f"{pep_count - 5} PEPs omitted")
 
     await event.message.respond(
         embed=embed, component=get_dismiss_button(event.author.id), reply=True

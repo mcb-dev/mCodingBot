@@ -2,14 +2,15 @@ import re
 
 import crescent
 import hikari
+from crescent.ext import tasks
 
-from mcodingbot.utils import Plugin
+from mcodingbot.config import CONFIG
+from mcodingbot.utils import PEPManager, Plugin
 
 plugin = Plugin()
+pep_manager = PEPManager()
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
-
-
 DISMISS_BUTTON_ID = "dismiss"
 
 
@@ -29,9 +30,10 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
     return action_row
 
 
-def get_pep_link(pep_number: int, *, hide_embed: bool) -> str:
-    url = f"https://peps.python.org/pep-{pep_number:04}/"
-    return f"<{url}>" if hide_embed else url
+@plugin.include
+@tasks.cronjob("@daily")
+async def update_peps() -> None:
+    await pep_manager.fetch_pep_info(plugin.app)
 
 
 @plugin.include
@@ -47,9 +49,13 @@ class PEPCommand:
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
-        await ctx.respond(
-            get_pep_link(self.pep_number, hide_embed=not self.show_embed)
-        )
+        if not (pep := pep_manager.get(self.pep_number)):
+            await ctx.respond(
+                f"{self.pep_number} is not a valid PEP.", ephemeral=True
+            )
+            return
+
+        await ctx.respond(embed=pep.embed())
 
 
 @plugin.include
@@ -63,23 +69,19 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for ref in re.finditer(PEP_REGEX, event.message.content)
     ]
 
-    pep_refs = sorted(set(pep_refs))
+    peps = map(pep_manager.get, sorted(set(pep_refs))[:5])
+    pep_links_message = "\n".join(str(pep) for pep in peps if pep)
 
-    if not pep_refs:
+    if not pep_links_message:
         return
 
-    pep_links_message = "\n".join(
-        f"PEP {pep_number}: {get_pep_link(pep_number, hide_embed=True)}"
-        for pep_number in pep_refs[:5]
-    )
+    embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
 
-    if (peps := len(pep_refs)) > 5:
-        pep_links_message += f"\n({peps - 5} PEPs omitted)"
+    if (pep_count := len(pep_refs)) > 5:
+        embed.set_footer(f"{pep_count - 5} PEPs omitted")
 
     await event.message.respond(
-        pep_links_message,
-        reply=True,
-        component=get_dismiss_button(event.author.id),
+        embed=embed, component=get_dismiss_button(event.author.id), reply=True
     )
 
 

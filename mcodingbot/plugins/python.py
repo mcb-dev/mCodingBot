@@ -8,10 +8,10 @@ from mcodingbot.config import CONFIG
 from mcodingbot.utils import PEPManager, Plugin
 
 plugin = Plugin()
+pep_manager = PEPManager()
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
-PEP_MANAGER = PEPManager()
 
 
 def encode_dismiss_button_id(id: hikari.Snowflake) -> str:
@@ -33,7 +33,7 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
 @plugin.include
 @tasks.cronjob("@daily")
 async def update_peps() -> None:
-    await PEP_MANAGER.fetch_pep_info(plugin.app)
+    await pep_manager.fetch_pep_info(plugin.app)
 
 
 @plugin.include
@@ -49,7 +49,7 @@ class PEPCommand:
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
-        if not (pep := PEP_MANAGER.get(self.pep_number)):
+        if not (pep := pep_manager.get(self.pep_number)):
             await ctx.respond(
                 f"{self.pep_number} is not a valid PEP.", ephemeral=True
             )
@@ -69,7 +69,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         for ref in re.finditer(PEP_REGEX, event.message.content)
     ]
 
-    peps = map(PEP_MANAGER.get, sorted(set(pep_refs))[:5])
+    peps = map(pep_manager.get, sorted(set(pep_refs))[:5])
     pep_links_message = "\n".join(str(pep) for pep in peps if pep)
 
     if not pep_links_message:

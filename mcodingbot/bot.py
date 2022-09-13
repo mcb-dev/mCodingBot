@@ -10,6 +10,7 @@ from mcodingbot.config import CONFIG
 from mcodingbot.database.database import Database
 from mcodingbot.utils import PepManager
 
+
 class Bot(crescent.Bot):
     def __init__(self) -> None:
         super().__init__(

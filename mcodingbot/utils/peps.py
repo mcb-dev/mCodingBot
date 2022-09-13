@@ -38,7 +38,6 @@ class PepManager:
             number=pep_number,
             title=pep["title"],
             authors=pep["authors"],
-            python_version=pep["python_version"],
             link=pep["url"],
         )
 
@@ -50,7 +49,6 @@ class Pep:
     title: str
     authors: str
     link: str
-    python_version: str | None
 
     def __str__(self) -> str:
         return f"PEP {self.number}: {self.title} (<{self.link}>)"

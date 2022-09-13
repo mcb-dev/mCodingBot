@@ -8,7 +8,7 @@ import hikari
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.database import Database
-
+from mcodingbot.utils import PepManager
 
 class Bot(crescent.Bot):
     def __init__(self) -> None:
@@ -20,7 +20,7 @@ class Bot(crescent.Bot):
         )
 
         self.plugins.load_folder("mcodingbot.plugins")
-
+        self.peps = PepManager(self)
         self._session: aiohttp.ClientSession | None = None
         self._db: Database | None = None
 

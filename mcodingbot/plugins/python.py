@@ -1,18 +1,21 @@
 import re
 
 import crescent
+from crescent.ext import tasks
 import hikari
 
 from mcodingbot.utils import Plugin
+from mcodingbot.utils import Pep
 
 plugin = Plugin()
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 
 
-def get_pep_link(pep_number: int, *, hide_embed: bool) -> str:
-    url = f"https://peps.python.org/pep-{pep_number:04}/"
-    return f"<{url}>" if hide_embed else url
+def get_pep(pep_number: int) -> Pep | None:
+    return plugin.app.peps.get(pep_number)
+
+
 
 
 @plugin.include
@@ -28,8 +31,12 @@ class PEPCommand:
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
+        if not (pep := get_pep(self.pep_number)):
+            await ctx.respond(f"{self.pep_number} is not a valid pep.", ephemeral=True)
+            return
+
         await ctx.respond(
-            get_pep_link(self.pep_number, hide_embed=not self.show_embed)
+            pep.stringify(hide_embed=not self.show_embed)
         )
 
 
@@ -49,12 +56,22 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
     if not pep_refs:
         return
 
-    pep_links_message = "\n".join(
-        f"PEP {pep_number}: {get_pep_link(pep_number, hide_embed=True)}"
+    peps = (
+        get_pep(pep_number)
         for pep_number in pep_refs[:5]
     )
 
-    if (peps := len(pep_refs)) > 5:
-        pep_links_message += f"\n({peps - 5} PEPs omitted)"
+    pep_links_message = '\n'.join(
+        pep.stringify(hide_embed=True) for pep in peps if pep
+    )
+
+
+    if (pep_number := len(pep_refs)) > 5:
+        pep_links_message += f"\n({pep_number - 5} PEPs omitted)"
 
     await event.message.respond(pep_links_message, reply=True)
+
+@plugin.include
+@tasks.loop(hours=1)
+async def update_peps() -> None:
+    await plugin.app.peps.fetch_pep_info()

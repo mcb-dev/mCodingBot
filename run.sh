@@ -2,6 +2,8 @@
 
 while true
 do
+    git pull
+    "${1:-python}" -m poetry install
     "${1:-python}" -m poetry run python -m mcodingbot
 
     echo "Hit CTRL+C to stop..."

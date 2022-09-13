@@ -4,6 +4,7 @@ import crescent
 import hikari
 from crescent.ext import tasks
 
+from mcodingbot.config import CONFIG
 from mcodingbot.utils import PEPManager, Plugin
 
 plugin = Plugin()
@@ -54,7 +55,7 @@ class PEPCommand:
             )
             return
 
-        await ctx.respond(pep)
+        await ctx.respond(embed=pep.embed())
 
 
 @plugin.include
@@ -69,18 +70,18 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
     ]
 
     peps = map(PEP_MANAGER.get, sorted(set(pep_refs))[:5])
-    pep_links_message = "\n".join(str(pep) for pep in peps if pep if pep)
+    pep_links_message = "\n".join(str(pep) for pep in peps if pep)
 
     if not pep_links_message:
         return
 
+    embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
+
     if (pep_count := len(pep_refs)) > 5:
-        pep_links_message += f"\n({pep_count - 5} PEPs omitted)"
+        embed.set_footer(f"{pep_count - 5} PEPs omitted")
 
     await event.message.respond(
-        pep_links_message,
-        component=get_dismiss_button(event.author.id),
-        reply=True,
+        embed=embed, component=get_dismiss_button(event.author.id), reply=True
     )
 
 

@@ -5,6 +5,9 @@ from logging import getLogger
 from typing import TYPE_CHECKING, Sequence
 
 import aiohttp
+import hikari
+
+from mcodingbot.config import CONFIG
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot
@@ -48,5 +51,12 @@ class PEPInfo:
     authors: str
     link: str
 
+    def embed(self) -> hikari.Embed:
+        return hikari.Embed(
+            title=f"PEP {self.number}: {self.title}",
+            url=self.link,
+            color=CONFIG.theme,
+        ).set_author(name=self.authors)
+
     def __str__(self) -> str:
-        return f"PEP {self.number}: {self.title} (<{self.link}>)"
+        return f"PEP {self.number}: [{self.title}]({self.link})"

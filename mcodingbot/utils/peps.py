@@ -14,11 +14,10 @@ __all__: Sequence[str] = ("PepManager", "Pep")
 
 class PepManager:
     def __init__(self, bot: Bot) -> None:
-        self._bot = bot
         self._peps: dict[int, Any] = {}
 
-    async def fetch_pep_info(self) -> None:
-        async with self._bot.session.get(
+    async def fetch_pep_info(self, bot: Bot) -> None:
+        async with bot.session.get(
             "https://peps.python.org/api/peps.json"
         ) as resp:
             if resp.status != 200:

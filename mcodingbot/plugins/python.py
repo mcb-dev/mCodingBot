@@ -74,8 +74,8 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
     if not pep_links_message:
         return
 
-    if (pep_number := len(pep_refs)) > 5:
-        pep_links_message += f"\n({pep_number - 5} PEPs omitted)"
+    if (pep_count := len(pep_refs)) > 5:
+        pep_links_message += f"\n({pep_count - 5} PEPs omitted)"
 
     await event.message.respond(
         pep_links_message,

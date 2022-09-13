@@ -10,6 +10,25 @@ plugin = Plugin()
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 
 
+DISMISS_BUTTON_ID = "dismiss"
+
+
+def encode_dismiss_button_id(id: hikari.Snowflake) -> str:
+    return f"{DISMISS_BUTTON_ID}:{id}"
+
+
+def decode_dismiss_button_id(dismiss_button_id: str) -> hikari.Snowflake:
+    return hikari.Snowflake(dismiss_button_id.split(":")[1])
+
+
+def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
+    action_row = plugin.app.rest.build_action_row()
+    action_row.add_button(
+        hikari.ButtonStyle.SECONDARY, encode_dismiss_button_id(id)
+    ).set_label("Dismiss").add_to_container()
+    return action_row
+
+
 def get_pep_link(pep_number: int, *, hide_embed: bool) -> str:
     url = f"https://peps.python.org/pep-{pep_number:04}/"
     return f"<{url}>" if hide_embed else url
@@ -57,4 +76,30 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
     if (peps := len(pep_refs)) > 5:
         pep_links_message += f"\n({peps - 5} PEPs omitted)"
 
-    await event.message.respond(pep_links_message, reply=True)
+    await event.message.respond(
+        pep_links_message,
+        reply=True,
+        component=get_dismiss_button(event.author.id),
+    )
+
+
+@plugin.include
+@crescent.event
+async def on_interaction(event: hikari.InteractionCreateEvent) -> None:
+    inter = event.interaction
+
+    if not (
+        isinstance(inter, hikari.ComponentInteraction)
+        and DISMISS_BUTTON_ID in inter.custom_id
+    ):
+        return
+
+    if inter.user.id != decode_dismiss_button_id(inter.custom_id):
+        await inter.create_initial_response(
+            hikari.ResponseType.MESSAGE_CREATE,
+            "Only the person who triggered this message can dismiss it.",
+            flags=hikari.MessageFlag.EPHEMERAL,
+        )
+        return
+
+    await inter.message.delete()

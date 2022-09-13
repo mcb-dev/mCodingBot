@@ -16,7 +16,7 @@ __all__: Sequence[str] = ("PepManager", "Pep")
 
 class PepManager:
     def __init__(self) -> None:
-        self._peps: dict[int, Any] = {}
+        self._peps: dict[int, Pep] = {}
 
     async def fetch_pep_info(self, bot: Bot) -> None:
         async with bot.session.get(
@@ -24,22 +24,21 @@ class PepManager:
         ) as resp:
             try:
                 resp.raise_for_status()
-                self._peps = {
-                    int(key): value
-                    for key, value in (await resp.json()).items()
-                }
             except aiohttp.ClientResponseError:
                 _LOG.exception("Could not fetch peps.")
+            else:
+                self._peps = {
+                    int(pep_id): Pep(
+                        number=int(pep_id),
+                        title=pep["title"],
+                        authors=pep["authors"],
+                        link=pep["url"],
+                    )
+                    for pep_id, pep in (await resp.json()).items()
+                }
 
     def get(self, pep_number: int) -> Pep | None:
-        if not (pep := self._peps.get(pep_number)):
-            return None
-        return Pep(
-            number=pep_number,
-            title=pep["title"],
-            authors=pep["authors"],
-            link=pep["url"],
-        )
+        return self._peps.get(pep_number)
 
 
 @dataclasses.dataclass

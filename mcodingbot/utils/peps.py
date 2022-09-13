@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Sequence, final
+from typing import TYPE_CHECKING, Any, Sequence
 
 import aiohttp
 
@@ -42,7 +42,6 @@ class PepManager:
         )
 
 
-@final
 @dataclasses.dataclass
 class Pep:
     number: int

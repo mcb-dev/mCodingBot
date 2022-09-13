@@ -1,10 +1,10 @@
 from __future__ import annotations
-import contextlib
 
-import aiohttp
 import dataclasses
 from logging import getLogger
 from typing import TYPE_CHECKING, Any, Sequence, final
+
+import aiohttp
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot
@@ -25,11 +25,11 @@ class PepManager:
             try:
                 resp.raise_for_status()
                 self._peps = {
-                    int(key): value for key, value in (await resp.json()).items()
+                    int(key): value
+                    for key, value in (await resp.json()).items()
                 }
             except aiohttp.ClientResponseError:
                 _LOG.exception("Could not fetch peps.")
-
 
     def get(self, pep_number: int) -> Pep | None:
         if not (pep := self._peps.get(pep_number)):

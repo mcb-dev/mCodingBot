@@ -6,6 +6,7 @@ from crescent.ext import tasks
 
 from mcodingbot.utils import PepManager, Plugin
 
+
 class PepPlugin(Plugin):
     def __init__(self) -> None:
         self.peps = PepManager()
@@ -33,6 +34,7 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
         hikari.ButtonStyle.SECONDARY, encode_dismiss_button_id(id)
     ).set_label("Dismiss").add_to_container()
     return action_row
+
 
 @plugin.include
 @tasks.loop(hours=1)
@@ -79,9 +81,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
         return
 
     peps = (plugin.peps.get(pep_number) for pep_number in pep_refs)
-    pep_links_message = "\n".join(
-        str(pep) for pep in peps if pep
-    )
+    pep_links_message = "\n".join(str(pep) for pep in peps if pep)
 
     if (pep_number := len(pep_refs)) > 5:
         pep_links_message += f"\n({pep_number - 5} PEPs omitted)"
@@ -89,7 +89,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
     await event.message.respond(
         pep_links_message,
         component=get_dismiss_button(event.author.id),
-        reply=True
+        reply=True,
     )
 
 

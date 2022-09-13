@@ -20,6 +20,7 @@ class Bot(crescent.Bot):
         )
 
         self.plugins.load_folder("mcodingbot.plugins")
+
         self._session: aiohttp.ClientSession | None = None
         self._db: Database | None = None
 

@@ -49,6 +49,5 @@ class Pep:
     link: str
     python_version: str | None
 
-    def stringify(self, *, hide_embed: bool) -> str:
-        link = f"<{self.link}>" if hide_embed else self.link
-        return f"PEP {self.number}: {self.title} ({link})"
+    def __str__(self) -> str:
+        return f"PEP {self.number}: {self.title} (<{self.link}>)"

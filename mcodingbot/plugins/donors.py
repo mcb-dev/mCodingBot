@@ -71,7 +71,10 @@ async def _is_donor(member: hikari.Member) -> bool:
     ):
         return True
 
-    user = await User.exists(user_id=member.id)
+    if CONFIG.no_db_mode:
+        user = None
+    else:
+        user = await User.exists(user_id=member.id)
     return user.is_donor if user else False
 
 

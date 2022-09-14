@@ -7,7 +7,11 @@ import crescent
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot
 
-__all__: Sequence[str] = ("Plugin",)
+__all__: Sequence[str] = ("Context", "Plugin")
+
+
+class Context(crescent.Context):
+    app: Bot
 
 
 class Plugin(crescent.Plugin):

@@ -1,7 +1,12 @@
+from __future__ import annotations
+
 import re
+from contextlib import suppress
+from datetime import datetime, timedelta, timezone
 
 import crescent
 import hikari
+from cachetools import TTLCache
 from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
@@ -9,6 +14,7 @@ from mcodingbot.utils import PEPManager, Plugin
 
 plugin = Plugin()
 pep_manager = PEPManager()
+recent_pep_responses: TTLCache[int, int] = TTLCache(maxsize=100, ttl=60 * 5)
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
@@ -58,31 +64,80 @@ class PEPCommand:
         await ctx.respond(embed=pep.embed())
 
 
-@plugin.include
-@crescent.event
-async def on_message(event: hikari.MessageCreateEvent) -> None:
-    if not event.message.content or event.author.is_bot:
-        return
-
+def get_peps_embed(content: str) -> hikari.Embed | None:
     pep_refs = [
-        int(ref.groupdict()["pep"])
-        for ref in re.finditer(PEP_REGEX, event.message.content)
+        int(ref.groupdict()["pep"]) for ref in re.finditer(PEP_REGEX, content)
     ]
-
     peps = map(pep_manager.get, sorted(set(pep_refs))[:5])
     pep_links_message = "\n".join(str(pep) for pep in peps if pep)
 
     if not pep_links_message:
-        return
+        return None
 
     embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
 
     if (pep_count := len(pep_refs)) > 5:
         embed.set_footer(f"{pep_count - 5} PEPs omitted")
 
-    await event.message.respond(
-        embed=embed, component=get_dismiss_button(event.author.id), reply=True
+    return embed
+
+
+@plugin.include
+@crescent.event
+async def on_message(event: hikari.MessageCreateEvent) -> None:
+    if not event.message.content or event.author.is_bot:
+        return
+    if embed := get_peps_embed(event.message.content):
+        response = await event.message.respond(
+            embed=embed,
+            component=get_dismiss_button(event.author.id),
+            reply=True,
+        )
+        recent_pep_responses[event.message.id] = response.id
+
+
+@plugin.include
+@crescent.event
+async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
+    if not event.author or event.author.is_bot:
+        return
+
+    embed = (
+        get_peps_embed(event.message.content)
+        if event.message.content
+        else None
     )
+    if original := recent_pep_responses.get(event.message.id):
+        with suppress(hikari.NotFoundError):
+            if embed:
+                await plugin.app.rest.edit_message(
+                    event.channel_id, original, embed=embed
+                )
+            else:
+                await plugin.app.rest.delete_message(
+                    event.channel_id, original
+                )
+                del recent_pep_responses[event.message.id]
+    elif embed:
+        age = datetime.now(timezone.utc) - event.message.created_at
+        if age > timedelta(minutes=1):
+            return
+
+        response = await event.message.respond(
+            embed=embed,
+            component=get_dismiss_button(event.author.id),
+            reply=True,
+        )
+        recent_pep_responses[event.message.id] = response.id
+
+
+@plugin.include
+@crescent.event
+async def on_message_delete(event: hikari.GuildMessageDeleteEvent) -> None:
+    if original := recent_pep_responses.get(event.message_id):
+        with suppress(hikari.NotFoundError):
+            await plugin.app.rest.delete_message(event.channel_id, original)
+            del recent_pep_responses[event.message_id]
 
 
 @plugin.include

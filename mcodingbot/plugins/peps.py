@@ -10,9 +10,7 @@ from cachetools import TTLCache
 from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import PEPManager, Plugin
-from mcodingbot.utils import Plugin, Context
-
+from mcodingbot.utils import Context, PEPManager, Plugin
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"

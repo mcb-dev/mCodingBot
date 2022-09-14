@@ -8,7 +8,7 @@ from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.models.user import User
-from mcodingbot.utils import Plugin, Context
+from mcodingbot.utils import Context, Plugin
 
 plugin = Plugin()
 

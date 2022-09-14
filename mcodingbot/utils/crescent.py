@@ -15,5 +15,6 @@ class Plugin(crescent.Plugin):
     def app(self) -> Bot:
         return cast("Bot", super().app)
 
+
 class Context(crescent.Context):
     app: Bot

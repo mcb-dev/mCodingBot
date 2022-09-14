@@ -2,7 +2,7 @@ import crescent
 import hikari
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import Plugin, Context
+from mcodingbot.utils import Context, Plugin
 
 plugin = Plugin()
 

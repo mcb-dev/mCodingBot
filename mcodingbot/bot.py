@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import aiohttp
@@ -8,6 +9,8 @@ import hikari
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.database import Database
+
+_LOG = logging.getLogger(__name__)
 
 
 class Bot(crescent.Bot):
@@ -38,7 +41,10 @@ class Bot(crescent.Bot):
 
     async def start(self, *args: Any, **kwargs: Any) -> None:
         self._session = aiohttp.ClientSession()
-        self._db = await Database.create()
+        if not CONFIG.no_db_mode:
+            self._db = await Database.create()
+        else:
+            _LOG.warning("Running bot without database.")
 
         await super().start(*args, **kwargs)
 

@@ -10,7 +10,7 @@ from cachetools import TTLCache
 from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import PEPManager, Plugin
+from mcodingbot.utils import Context, PEPManager, Plugin
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
@@ -58,7 +58,7 @@ class PEPCommand:
         bool, "Whether to show the embed.", name="show-embed", default=True
     )
 
-    async def callback(self, ctx: crescent.Context) -> None:
+    async def callback(self, ctx: Context) -> None:
         if not (pep := pep_manager.get(self.pep_number)):
             await ctx.respond(
                 f"{self.pep_number} is not a valid PEP.", ephemeral=True

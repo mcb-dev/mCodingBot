@@ -2,20 +2,20 @@ import crescent
 import hikari
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import Plugin
+from mcodingbot.utils import Context, Plugin
 
 plugin = Plugin()
 
 
 @plugin.include
 @crescent.command(name="ping", description="Pong!")
-async def ping(ctx: crescent.Context) -> None:
+async def ping(ctx: Context) -> None:
     await ctx.respond(f"Pong! {round(ctx.app.heartbeat_latency*1000)} ms.")
 
 
 @plugin.include
 @crescent.command(name="links", description="Useful links")
-async def links(ctx: crescent.Context) -> None:
+async def links(ctx: Context) -> None:
     embed = hikari.Embed(
         title="Links",
         color=CONFIG.theme,

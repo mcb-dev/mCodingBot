@@ -15,9 +15,10 @@ from mcodingbot.utils import PEPManager, Plugin
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
 MAX_AGE_FOR_SEND = timedelta(minutes=1)
+MAX_AGE_FOR_EDIT = timedelta(minutes=5)
 
 recent_pep_responses: TTLCache[int, int] = TTLCache(
-    maxsize=100, ttl=MAX_AGE_FOR_SEND.total_seconds() + 5
+    maxsize=100, ttl=MAX_AGE_FOR_EDIT.total_seconds()
 )
 plugin = Plugin()
 pep_manager = PEPManager()

@@ -12,15 +12,15 @@ from crescent.ext import tasks
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import PEPManager, Plugin
 
-plugin = Plugin()
-pep_manager = PEPManager()
+PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
+DISMISS_BUTTON_ID = "dismiss"
 MAX_AGE_FOR_SEND = timedelta(minutes=1)
+
 recent_pep_responses: TTLCache[int, int] = TTLCache(
     maxsize=100, ttl=MAX_AGE_FOR_SEND.total_seconds() + 5
 )
-
-PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
-DISMISS_BUTTON_ID = "dismiss"
+plugin = Plugin()
+pep_manager = PEPManager()
 
 
 def encode_dismiss_button_id(id: hikari.Snowflake) -> str:

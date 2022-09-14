@@ -11,6 +11,7 @@ _ALWAYS_SAVE = {"discord_token", "db_password"}
 
 @dataclass
 class Config:
+    no_db_mode: bool = False
     db_password: str = "DATABASE_PASSWORD"
 
     discord_token: str = "DISCORD_TOKEN"

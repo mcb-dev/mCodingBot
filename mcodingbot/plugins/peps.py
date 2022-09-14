@@ -14,7 +14,11 @@ from mcodingbot.utils import PEPManager, Plugin
 
 plugin = Plugin()
 pep_manager = PEPManager()
-recent_pep_responses: TTLCache[int, int] = TTLCache(maxsize=100, ttl=60 * 5)
+MAX_AGE_FOR_SEND = timedelta(minutes=1)
+recent_pep_responses: TTLCache[int, int] = TTLCache(
+    maxsize=100,
+    ttl=MAX_AGE_FOR_SEND.total_seconds() + 5,
+)
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
@@ -62,6 +66,10 @@ class PEPCommand:
             return
 
         await ctx.respond(embed=pep.embed())
+
+
+def within_age_cutoff(message_created_at: datetime) -> bool:
+    return datetime.now(timezone.utc) - message_created_at <= MAX_AGE_FOR_SEND
 
 
 def get_peps_embed(content: str) -> hikari.Embed | None:
@@ -118,11 +126,7 @@ async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
                     event.channel_id, original
                 )
                 del recent_pep_responses[event.message.id]
-    elif embed:
-        age = datetime.now(timezone.utc) - event.message.created_at
-        if age > timedelta(minutes=1):
-            return
-
+    elif embed and within_age_cutoff(event.message.created_at):
         response = await event.message.respond(
             embed=embed,
             component=get_dismiss_button(event.author.id),

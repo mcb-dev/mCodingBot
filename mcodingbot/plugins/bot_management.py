@@ -17,6 +17,6 @@ plugin = Plugin()
     dm_enabled=False,
     guild=CONFIG.mcoding_server,
 )
-async def restart(self, ctx: Context) -> None:
+async def restart(ctx: Context) -> None:
     await ctx.respond("Restarting bot...")
     await ctx.app.close()

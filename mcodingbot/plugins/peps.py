@@ -73,7 +73,7 @@ def within_age_cutoff(message_created_at: datetime) -> bool:
 
 def get_peps_embed(content: str) -> hikari.Embed | None:
     pep_refs = [
-        int(ref.groupdict()["pep"]) for ref in re.finditer(PEP_REGEX, content)
+        int(ref.group("pep")) for ref in re.finditer(PEP_REGEX, content)
     ]
     peps = map(pep_manager.get, sorted(set(pep_refs))[:5])
     pep_links_message = "\n".join(str(pep) for pep in peps if pep)

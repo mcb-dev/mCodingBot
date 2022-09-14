@@ -16,8 +16,7 @@ plugin = Plugin()
 pep_manager = PEPManager()
 MAX_AGE_FOR_SEND = timedelta(minutes=1)
 recent_pep_responses: TTLCache[int, int] = TTLCache(
-    maxsize=100,
-    ttl=MAX_AGE_FOR_SEND.total_seconds() + 5,
+    maxsize=100, ttl=MAX_AGE_FOR_SEND.total_seconds() + 5
 )
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)

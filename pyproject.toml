@@ -14,6 +14,7 @@ python = "^3.8,<3.11"
 hikari = "^2.0.0.dev110"
 hikari-crescent = "^0.3.2"
 apgorm = "^1.0.0b12"
+rapidfuzz = "^2.8.0"
 
 [tool.poetry.dev-dependencies]
 nox = "^2022.8.7"

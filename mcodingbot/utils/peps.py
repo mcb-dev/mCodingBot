@@ -41,7 +41,9 @@ class PEPManager:
                     )
                     for pep_id, pep in (await resp.json()).items()
                 }
-                self._pep_map = {k: v.title for k, v in self._peps.items()}
+                self._pep_map = {
+                    k: f"{v.title} ({v.number})" for k, v in self._peps.items()
+                }
 
     def get(self, pep_number: int) -> PEPInfo | None:
         return self._peps.get(pep_number)

@@ -12,8 +12,8 @@ def fuzzy_search(
     query: str,
     choices: Mapping[K, V],
     *,
-    score_cutoff: int | float | None,
-    limit: int,
+    score_cutoff: int | float | None = None,
+    limit: int | None = None,
 ) -> list[tuple[V, float, K]]:
     return process.extract(
         query,

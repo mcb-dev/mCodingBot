@@ -48,7 +48,7 @@ class PEPManager:
     def get(self, pep_number: int) -> PEPInfo | None:
         return self._peps.get(pep_number)
 
-    def search(self, query: str, *, limit: int) -> Iterator[PEPInfo]:
+    def search(self, query: str, *, limit: int | None = None) -> Iterator[PEPInfo]:
         res = fuzzy_search(query, self._pep_map, limit=limit)
         for pep in res:
             if pep_info := self.get(pep[2]):

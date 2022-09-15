@@ -7,7 +7,7 @@ from mcodingbot.utils import Context, Plugin
 plugin = Plugin()
 
 
-def nat_round(__x: int | float) -> int:
+def nat_round(__x: float) -> int:
     n = int(__x)
     return n + (__x - n >= 0.5)
 

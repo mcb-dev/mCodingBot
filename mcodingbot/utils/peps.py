@@ -1,8 +1,10 @@
 from __future__ import annotations
+from curses.ascii import isdigit
 
 from dataclasses import dataclass
+import itertools
 from logging import getLogger
-from typing import TYPE_CHECKING, Iterator, Sequence
+from typing import TYPE_CHECKING, Iterable, Iterator, Sequence
 
 import aiohttp
 import hikari
@@ -48,12 +50,32 @@ class PEPManager:
     def get(self, pep_number: int) -> PEPInfo | None:
         return self._peps.get(pep_number)
 
+
+    def _get_matches_digits(self, query: str, limit: int | None) -> tuple[Iterable[PEPInfo], int | None]:
+        """
+        Returns a tuple of (Items found, remaining amount of limit).
+        """
+        items_iter = (value for key, value in self._peps.items() if str(key).startswith(query))
+        items = list(itertools.islice(items_iter, limit))
+        if limit:
+            limit_left = limit - len(items)
+        else:
+            limit_left = None
+        return items, limit_left
+
     def search(
         self, query: str, *, limit: int | None = None
     ) -> Iterator[PEPInfo]:
+        items: Iterable[PEPInfo] = []
+        if query.isdigit():
+            items, limit = self._get_matches_digits(query, limit)
+            yield from items
+
         res = fuzzy_search(query, self._pep_map, limit=limit)
         for pep in res:
             if pep_info := self.get(pep[2]):
+                if pep_info in items:
+                    return
                 yield pep_info
 
 

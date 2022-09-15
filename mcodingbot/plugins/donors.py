@@ -8,8 +8,9 @@ from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.models.user import User
+from mcodingbot.utils import Context, Plugin
 
-plugin = crescent.Plugin()
+plugin = Plugin()
 
 
 @plugin.include
@@ -27,7 +28,7 @@ class SetDonorStatus:
         bool, "Whether or not this user is a donor.", name="is-donor"
     )
 
-    async def callback(self, ctx: crescent.Context) -> None:
+    async def callback(self, ctx: Context) -> None:
         assert ctx.guild_id
 
         await _update_donor_role(self.member.id, self.is_donor)
@@ -71,7 +72,10 @@ async def _is_donor(member: hikari.Member) -> bool:
     ):
         return True
 
-    user = await User.exists(user_id=member.id)
+    if CONFIG.no_db_mode:
+        user = None
+    else:
+        user = await User.exists(user_id=member.id)
     return user.is_donor if user else False
 
 

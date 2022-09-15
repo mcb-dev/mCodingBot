@@ -4,8 +4,9 @@ import crescent
 import hikari
 
 from mcodingbot.config import CONFIG
+from mcodingbot.utils import Context, Plugin
 
-plugin = crescent.Plugin()
+plugin = Plugin()
 
 
 @plugin.include
@@ -17,6 +18,6 @@ plugin = crescent.Plugin()
     guild=CONFIG.mcoding_server,
 )
 class RestartBot:
-    async def callback(self, ctx: crescent.Context) -> None:
+    async def callback(self, ctx: Context) -> None:
         await ctx.respond("Restarting bot...")
         await ctx.app.close()

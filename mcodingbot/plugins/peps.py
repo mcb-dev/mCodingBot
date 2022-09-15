@@ -69,7 +69,7 @@ async def update_peps() -> None:
 )
 class PEPCommand:
     pep = crescent.option(
-        int, "PEP number/title", autocomplete=autocomplete_pep
+        int, "The PEP number or title.", autocomplete=autocomplete_pep
     )
 
     async def callback(self, ctx: Context) -> None:

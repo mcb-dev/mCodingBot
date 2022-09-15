@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from logging import getLogger
-from typing import TYPE_CHECKING, Generator, Sequence
+from typing import TYPE_CHECKING, Iterator, Sequence
 
 import aiohttp
 import hikari
@@ -50,7 +50,7 @@ class PEPManager:
 
     def search(
         self, query: str, limit: int = 20
-    ) -> Generator[PEPInfo, None, None]:
+    ) -> Iterator[PEPInfo]:
         res = fuzzy_search(query, self._pep_map, limit=limit)
         return (
             pep_info

@@ -9,7 +9,7 @@ K = TypeVar("K")
 V = TypeVar("V")
 
 
-def find(
+def fuzzy_search(
     query: str,
     choices: Mapping[K, V],
     score_cutoff: int | float | None = None,

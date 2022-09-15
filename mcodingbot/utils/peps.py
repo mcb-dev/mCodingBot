@@ -8,7 +8,7 @@ import aiohttp
 import hikari
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import fuzzy_search
+from mcodingbot.utils.search import fuzzy_search
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot

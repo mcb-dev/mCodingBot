@@ -7,15 +7,22 @@ from mcodingbot.utils import Context, Plugin
 plugin = Plugin()
 
 
-def nat_round(__x: float) -> int:
-    n = int(__x)
-    return n + (__x - n >= 0.5)
+def natural_round(x: float) -> int:
+    """
+    Rounds in the same way as Python 2's `round()`.
+    If the real part of x is >= .5, rounds up ; else, rounds down.
+    """
+
+    n = int(x)
+    return n + (x - n >= 0.5)
 
 
 @plugin.include
 @crescent.command(name="ping", description="Pong!")
 async def ping(ctx: Context) -> None:
-    await ctx.respond(f"Pong! {nat_round(ctx.app.heartbeat_latency*1000)} ms.")
+    await ctx.respond(
+        f"Pong! {natural_round(ctx.app.heartbeat_latency*1000)} ms."
+    )
 
 
 @plugin.include

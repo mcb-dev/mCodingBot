@@ -47,7 +47,7 @@ async def autocomplete_pep(
     if not option.value:
         return []
 
-    results = pep_manager.search(str(option.value))
+    results = pep_manager.search(option.value)
 
     return [
         hikari.CommandChoice(

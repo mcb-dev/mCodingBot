@@ -8,7 +8,7 @@ import aiohttp
 import hikari
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils.search import find
+from mcodingbot.utils import find
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot

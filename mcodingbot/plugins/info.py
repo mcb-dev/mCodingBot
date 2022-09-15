@@ -11,7 +11,7 @@ plugin = Plugin()
 @crescent.command(name="ping", description="Pong!")
 class PingCommand:
     async def callback(self, ctx: Context) -> None:
-        await ctx.respond(f"Pong! {round(ctx.app.heartbeat_latency*1000)} ms.")
+        await ctx.respond(f"Pong! {int(ctx.app.heartbeat_latency * 1000)} ms.")
 
 
 @plugin.include

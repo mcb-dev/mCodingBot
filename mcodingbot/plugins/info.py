@@ -7,11 +7,16 @@ from mcodingbot.utils import Context, Plugin
 plugin = Plugin()
 
 
+def nat_round(__x: int | float) -> int:
+    n = int(__x)
+    return n + (__x - n >= .5)
+
+
 @plugin.include
 @crescent.command(name="ping", description="Pong!")
 class PingCommand:
     async def callback(self, ctx: Context) -> None:
-        await ctx.respond(f"Pong! {int(ctx.app.heartbeat_latency * 1000)} ms.")
+        await ctx.respond(f"Pong! {nat_round(ctx.app.heartbeat_latency * 1000)} ms.")
 
 
 @plugin.include

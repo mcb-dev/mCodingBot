@@ -5,7 +5,6 @@ from typing import TypeVar
 
 from rapidfuzz import fuzz, process
 
-
 K = TypeVar("K")
 V = TypeVar("V")
 

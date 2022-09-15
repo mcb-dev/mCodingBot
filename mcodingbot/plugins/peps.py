@@ -30,6 +30,21 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
     return action_row
 
 
+async def autocomplete_pep(
+    ctx: crescent.AutocompleteContext,
+    options: hikari.AutocompleteInteractionOption,
+) -> list[hikari.CommandChoice]:
+    if not options.value:
+        return []
+
+    results = pep_manager.search(str(options.value))
+
+    return [
+        hikari.CommandChoice(name=pep.title, value=pep.number)
+        for pep in results
+    ]
+
+
 @plugin.include
 @tasks.loop(hours=12)
 async def update_peps() -> None:
@@ -41,17 +56,14 @@ async def update_peps() -> None:
     name="pep", description="Find a Python Enhancement Proposal."
 )
 class PEPCommand:
-    pep_number = crescent.option(
-        int, "The PEP number.", name="pep-number", min_value=0, max_value=9999
-    )
-    show_embed = crescent.option(
-        bool, "Whether to show the embed.", name="show-embed", default=True
+    pep = crescent.option(
+        int, "PEP number/title", autocomplete=autocomplete_pep
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
-        if not (pep := pep_manager.get(self.pep_number)):
+        if not (pep := pep_manager.get(self.pep)):
             await ctx.respond(
-                f"{self.pep_number} is not a valid PEP.", ephemeral=True
+                f"{self.pep} is not a valid PEP.", ephemeral=True
             )
             return
 

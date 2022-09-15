@@ -52,11 +52,9 @@ class PEPManager:
         self, query: str, limit: int = 20
     ) -> Iterator[PEPInfo]:
         res = fuzzy_search(query, self._pep_map, limit=limit)
-        return (
-            pep_info
-            for pep in res
-            if (pep_info := self.get(pep[2])) is not None
-        )
+        for pep in res:
+            if (pep_info := self.get(pep[2])):
+                yield pep_info
 
 
 @dataclass

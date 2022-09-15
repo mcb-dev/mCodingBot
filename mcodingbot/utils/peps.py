@@ -52,7 +52,11 @@ class PEPManager:
         self, query: str, limit: int = 20
     ) -> Generator[PEPInfo, None, None]:
         res = fuzzy_search(query, self._pep_map, limit=limit)
-        return (self.get(pep[2]) for pep in res)
+        return (
+            pep_info
+            for pep in res
+            if (pep_info := self.get(pep[2])) is not None
+        )
 
 
 @dataclass

@@ -42,12 +42,12 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
 
 async def autocomplete_pep(
     ctx: crescent.AutocompleteContext,
-    options: hikari.AutocompleteInteractionOption,
+    option: hikari.AutocompleteInteractionOption,
 ) -> list[hikari.CommandChoice]:
-    if not options.value:
+    if not option.value:
         return []
 
-    results = pep_manager.search(str(options.value))
+    results = pep_manager.search(str(option.value))
 
     return [
         hikari.CommandChoice(

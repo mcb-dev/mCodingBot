@@ -9,7 +9,7 @@ plugin = Plugin()
 
 def nat_round(__x: int | float) -> int:
     n = int(__x)
-    return n + (__x - n >= .5)
+    return n + (__x - n >= 0.5)
 
 
 @plugin.include

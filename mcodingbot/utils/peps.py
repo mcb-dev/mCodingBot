@@ -8,7 +8,7 @@ import aiohttp
 import hikari
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import find
+from mcodingbot.utils import fuzzy_search
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot
@@ -51,7 +51,7 @@ class PEPManager:
     def search(
         self, query: str, limit: int = 20
     ) -> Generator[PEPInfo, None, None]:
-        res = find(query, self._pep_map, limit=limit)
+        res = fuzzy_search(query, self._pep_map, limit=limit)
         return (self.get(pep[2]) for pep in res)
 
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import itertools
+from dataclasses import dataclass
 from logging import getLogger
 from typing import TYPE_CHECKING, Iterable, Iterator, Sequence
 

@@ -1,5 +1,4 @@
 from __future__ import annotations
-from curses.ascii import isdigit
 
 from dataclasses import dataclass
 import itertools
@@ -50,33 +49,37 @@ class PEPManager:
     def get(self, pep_number: int) -> PEPInfo | None:
         return self._peps.get(pep_number)
 
-
-    def _get_matches_digits(self, query: str, limit: int | None) -> tuple[Iterable[PEPInfo], int | None]:
+    def _get_matches_digits(
+        self, query: str, limit: int | None
+    ) -> tuple[Iterable[PEPInfo], int]:
         """
-        Returns a tuple of (Items found, remaining amount of limit).
+        Returns a tuple of (Items found, Amount of items found).
         """
-        items_iter = (value for key, value in self._peps.items() if str(key).startswith(query))
+        items_iter = (
+            value
+            for key, value in self._peps.items()
+            if str(key).startswith(query)
+        )
         items = list(itertools.islice(items_iter, limit))
-        if limit:
-            limit_left = limit - len(items)
-        else:
-            limit_left = None
-        return items, limit_left
+        return items, len(items)
 
     def search(
         self, query: str, *, limit: int | None = None
     ) -> Iterator[PEPInfo]:
-        items: Iterable[PEPInfo] = []
+        yielded = 0
         if query.isdigit():
-            items, limit = self._get_matches_digits(query, limit)
+            items, yielded = self._get_matches_digits(query, limit)
             yield from items
 
         res = fuzzy_search(query, self._pep_map, limit=limit)
         for pep in res:
             if pep_info := self.get(pep[2]):
                 if pep_info in items:
-                    return
+                    continue
+                yielded += 1
                 yield pep_info
+                if limit and yielded >= limit:
+                    return
 
 
 @dataclass
@@ -92,6 +95,17 @@ class PEPInfo:
             url=self.link,
             color=CONFIG.theme,
         ).set_author(name=self.authors)
+
+    def truncated_title(self) -> str:
+        pep_digits = len(str(self.number))
+
+        max_name_length = 100 - pep_digits - 3
+
+        name = self.title
+        if len(name) > max_name_length:
+            name = f"{self.title[:max_name_length - 3]}..."
+
+        return f"{name} ({self.number})"
 
     def __str__(self) -> str:
         return f"PEP {self.number}: [{self.title}]({self.link})"

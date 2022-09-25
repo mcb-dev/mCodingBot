@@ -100,13 +100,14 @@ class PEPInfo:
     def truncated_title(self) -> str:
         pep_digits = len(str(self.number))
 
-        # 3 is the length two parenthesis and the space used to seperate the pep number
-        # from the pep title.
+        # 3 is the length two parenthesis and the space used to seperate the
+        # pep number from the pep title.
         max_name_length = 100 - pep_digits - 3
 
         name = self.title
         if len(name) > max_name_length:
-            # an extra 3 chars need to be removed to make space for the ellipsis
+            # an extra 3 chars need to be removed to make space for the
+            # ellipsis.
             name = f"{self.title[:max_name_length - 3]}..."
 
         return f"{name} ({self.number})"

@@ -1,3 +1,6 @@
+# Poetry Lock File
+poetry.lock
+
 # IDE folder settings
 .idea
 .vs

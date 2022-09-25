@@ -12,7 +12,7 @@ from mcodingbot.database.converters import NumericConverter
 class User(Model):
     user_id = types.Numeric().field().with_converter(NumericConverter)
     is_donor = types.Boolean().field(default=False)
-    words = ManyToMany["UserWord", "Word"](
+    words = ManyToMany["Word", "UserWord"](
         "user_id", "user_words.user_id", "user_words.word_id", "words.id"
     )
 
@@ -37,10 +37,10 @@ class User(Model):
         Return `True` if the word was successfully removed from the user.
         Return `False` otherwise.
         """
-        if not await User.exists(user_id=user_id):
+        user = await User.exists(user_id=user_id)
+        if not user:
             return False
 
-        user = await User.fetch(user_id=user_id)
         words = await user.words.fetchmany()
 
         for word_ in words:
@@ -49,9 +49,8 @@ class User(Model):
         else:
             return False
 
-        try:
-            word_model = await Word.fetch(word=word)
-        except ModelNotFound:
+        word_model = await Word.exists(word=word)
+        if not word_model:
             return False
 
         await user.words.remove(word_model)
@@ -64,7 +63,7 @@ class Word(Model):
     word = types.VarChar(32).field()
     word_unique = Unique(word)
 
-    users = ManyToMany["UserWord", "User"](
+    users = ManyToMany["User", "UserWord"](
         "id", "user_words.word_id", "user_words.user_id", "users.user_id"
     )
 

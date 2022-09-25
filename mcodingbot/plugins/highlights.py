@@ -50,8 +50,8 @@ class DeleteHighlight:
 
     async def callback(self, ctx: Context) -> None:
         if await User.delete_word(self.word, ctx.user.id):
-            await ctx.respond(f'Removed "{self.word}" from your highlights.')
             _uncache_highlight(self.word, ctx.user.id)
+            await ctx.respond(f'Removed "{self.word}" from your highlights.')
             return
 
         await ctx.respond(f'"{self.word}" was not one of your highlights.')

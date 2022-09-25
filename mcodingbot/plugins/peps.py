@@ -50,7 +50,7 @@ async def autocomplete_pep(
     results = pep_manager.search(str(option.value), limit=20)
 
     return [
-        hikari.CommandChoice(name=pep.truncated_title(), value=pep.number)
+        hikari.CommandChoice(name=pep.truncated_title, value=pep.number)
         for pep in results
     ]
 

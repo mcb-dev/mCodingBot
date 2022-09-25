@@ -97,12 +97,20 @@ class PEPInfo:
         ).set_author(name=self.authors)
 
     def truncated_title(self) -> str:
+        """
+        Returns a pep's title. The tile is returned in the format `pep_name (Number)`
+        The length of pep name is truncated to `100 - digits in pep number - 3`. 100 is
+        the max amount of characters allowed in a autocomplete option by Discord. The 3
+        is the length of the two parenthesis and the space used to seperate the pep
+        number from the title.
+        """
         pep_digits = len(str(self.number))
 
         max_name_length = 100 - pep_digits - 3
 
         name = self.title
         if len(name) > max_name_length:
+            # an extra 3 chars need to be removed to make space for the ellipsis
             name = f"{self.title[:max_name_length - 3]}..."
 
         return f"{name} ({self.number})"

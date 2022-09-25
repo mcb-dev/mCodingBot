@@ -76,10 +76,10 @@ class PEPManager:
             if pep_info := self.get(pep[2]):
                 if pep_info in items:
                     continue
-                yielded += 1
-                yield pep_info
                 if limit and yielded >= limit:
                     return
+                yielded += 1
+                yield pep_info
 
 
 @dataclass

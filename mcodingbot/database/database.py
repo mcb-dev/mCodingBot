@@ -6,7 +6,7 @@ from typing import TypeVar
 import apgorm
 
 from mcodingbot.config import CONFIG
-from mcodingbot.database.models.user import User
+from mcodingbot.database.models.user import User, UserWord, Word
 
 _LOGGER = logging.getLogger(__name__)
 _SELF = TypeVar("_SELF", bound="Database")
@@ -14,6 +14,8 @@ _SELF = TypeVar("_SELF", bound="Database")
 
 class Database(apgorm.Database):
     users = User
+    user_words = UserWord
+    words = Word
 
     @classmethod
     async def create(cls: type[_SELF]) -> _SELF:

@@ -34,7 +34,9 @@ class CreateHighlight:
 
     async def callback(self, ctx: Context) -> None:
         if len(self.word) > 32:
-            await ctx.respond("Highlights can not be longer than 32 characters.")
+            await ctx.respond(
+                "Highlights can not be longer than 32 characters."
+            )
             return
         await User.add_word(self.word, ctx.user.id)
         await ctx.respond(f'Added "{self.word}" to your highlights.')
@@ -61,18 +63,19 @@ class DeleteHighlight:
 @highlights_group.child
 @crescent.command(name="list")
 async def list(ctx: Context) -> None:
-    if not await User.exists(user_id=ctx.user.id):
+    user = await User.exists(user_id=ctx.user.id)
+
+    if user is None:
         await ctx.respond("You do not have any highlights.")
         return
 
-    user = await User.fetch(user_id=ctx.user.id)
     words = await user.words.fetchmany()
 
     if not words:
         await ctx.respond("You do not have any highlights.")
         return
 
-    await ctx.respond('\n'.join((word.word for word in words)))
+    await ctx.respond("\n".join((word.word for word in words)))  # type: ignore
 
 
 @plugin.include

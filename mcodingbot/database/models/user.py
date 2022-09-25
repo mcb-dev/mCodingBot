@@ -1,11 +1,14 @@
 from __future__ import annotations
+from typing import cast, final
 
 from apgorm import ForeignKey, ManyToMany, Model, Unique, types
+from apgorm.exceptions import ModelNotFound
 from asyncpg.exceptions import UniqueViolationError
 
 from mcodingbot.database.converters import NumericConverter
 
 
+@final
 class User(Model):
     user_id = types.Numeric().field().with_converter(NumericConverter)
     is_donor = types.Boolean().field(default=False)
@@ -22,10 +25,43 @@ class User(Model):
         except UniqueViolationError:
             return await User.fetch(user_id=user_id)
 
+    @staticmethod
+    async def add_word(word: str, user_id: int) -> None:
+        word_model = await Word.get_or_create(word=word)
+        user = await User.get_or_create(user_id=user_id)
+        await word_model.users.add(user)
 
+    @staticmethod
+    async def delete_word(word: str, user_id: int) -> bool:
+        """
+        Return `True` if the word was successfully removed from the user.
+        Return `False` otherwise.
+        """
+        if not await User.exists(user_id=user_id):
+            return False
+
+        user = await User.fetch(user_id=user_id)
+        words = await user.words.fetchmany()
+
+        for word_ in words:
+            if word_.word == word:
+                break
+        else:
+            return False
+
+        try:
+            word_model = await Word.fetch(word=word)
+        except ModelNotFound:
+            return False
+
+        await user.words.remove(word_model)
+        return True
+
+
+@final
 class Word(Model):
     id = types.Serial().field()
-    word = types.VarChar().field()
+    word = types.VarChar(32).field()
     word_unique = Unique(word)
 
     users = ManyToMany["UserWord", "User"](
@@ -35,29 +71,16 @@ class Word(Model):
     primary_key = (id,)
 
     @staticmethod
-    async def create_or_add_user(word: str, user_id: int) -> Word:
-        if await Word.exists(word=word):
+    async def get_or_create(word: str) -> Word:
+        try:
             return await Word(word=word).create()
-        word_model = await Word.fetch(word=word)
-        await word_model.users.add(await User.get_or_create(user_id))
-        return word_model
-
-    @staticmethod
-    async def delete_or_remove_user(word: str, user_id: int) -> bool:
-        """Return `True` if the word was successfully removed from the user."""
-        user = await User.fetch(user_id=user_id)
-        if not user.words:
-            return False
-
-        word_model = await Word.fetch(word=word)
-        await word_model.users.add(await User.get_or_create(user_id))
-        return word_model
-
+        except UniqueViolationError:
+            return await Word.fetch(word=word)
 
 
 class UserWord(Model):
     word_id = types.Serial().field()
-    user_id = types.Serial().field()
+    user_id = types.Numeric().field().with_converter(NumericConverter)
 
     word_id_fk = ForeignKey(word_id, Word.id)
     user_id_fk = ForeignKey(user_id, User.user_id)

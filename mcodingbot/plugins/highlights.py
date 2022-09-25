@@ -14,8 +14,7 @@ highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
 
 
 def _cache_highlight(word: str, *user_ids: hikari.Snowflake) -> None:
-    for user_id in user_ids:
-        highlights_cache[word].append(user_id)
+    highlights_cache[word].extend(user_ids)
 
 
 def _uncache_highlight(word: str, *user_ids: hikari.Snowflake) -> None:

@@ -12,7 +12,7 @@ from crescent.ext import tasks
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Context, PEPManager, Plugin
 
-PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
+PEP_REGEX = re.compile(r"(?<!https:\/\/peps\.python\.org\/)pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
 MAX_AGE_FOR_SEND = timedelta(minutes=1)
 MAX_AGE_FOR_EDIT = timedelta(minutes=5)

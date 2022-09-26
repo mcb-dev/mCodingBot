@@ -77,13 +77,15 @@ class PEPManager:
         res = fuzzy_search(query, self._pep_map, limit=limit)
 
         for pep in res:
-            if pep_info := self.get(pep[2]):
-                if limit and yielded >= limit:
-                    return
-                if pep_info in items:
-                    continue
-                yielded += 1
-                yield pep_info
+            pep_info = self.get(pep[2])
+            if not pep_info:
+                return
+            if limit and yielded >= limit:
+                return
+            if pep_info in items:
+                continue
+            yielded += 1
+            yield pep_info
 
 
 @dataclass

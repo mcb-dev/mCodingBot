@@ -71,7 +71,11 @@ class PEPManager:
             items, yielded = self._get_matches_digits(query, limit)
             yield from items
 
+        if limit and yielded >= limit:
+            return
+
         res = fuzzy_search(query, self._pep_map, limit=limit)
+
         for pep in res:
             if pep_info := self.get(pep[2]):
                 if limit and yielded >= limit:

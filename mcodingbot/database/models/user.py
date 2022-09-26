@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import cast, final
 
 from apgorm import ForeignKey, ManyToMany, Model, Unique, types
-from apgorm.exceptions import ModelNotFound
 from asyncpg.exceptions import UniqueViolationError
 
 from mcodingbot.database.converters import NumericConverter

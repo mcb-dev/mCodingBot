@@ -74,7 +74,7 @@ async def list(ctx: Context) -> None:
         await ctx.respond("You do not have any highlights.")
         return
 
-    await ctx.respond("\n".join(word.word for word in words))  # type: ignore
+    await ctx.respond("\n".join(word.word for word in words))
 
 
 @plugin.include

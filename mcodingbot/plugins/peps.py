@@ -10,7 +10,7 @@ from cachetools import TTLCache
 from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import PEPManager, Plugin
+from mcodingbot.utils import Context, PEPManager, Plugin
 
 PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
 DISMISS_BUTTON_ID = "dismiss"
@@ -40,6 +40,23 @@ def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
     return action_row
 
 
+async def autocomplete_pep(
+    ctx: crescent.AutocompleteContext,
+    option: hikari.AutocompleteInteractionOption,
+) -> list[hikari.CommandChoice]:
+    if not option.value:
+        return []
+
+    results = pep_manager.search(str(option.value), limit=20)
+
+    return [
+        hikari.CommandChoice(
+            name=f"{pep.title} ({pep.number})", value=pep.number
+        )
+        for pep in results
+    ]
+
+
 @plugin.include
 @tasks.loop(hours=12)
 async def update_peps() -> None:
@@ -51,17 +68,14 @@ async def update_peps() -> None:
     name="pep", description="Find a Python Enhancement Proposal."
 )
 class PEPCommand:
-    pep_number = crescent.option(
-        int, "The PEP number.", name="pep-number", min_value=0, max_value=9999
-    )
-    show_embed = crescent.option(
-        bool, "Whether to show the embed.", name="show-embed", default=True
+    pep = crescent.option(
+        int, "The PEP number or title.", autocomplete=autocomplete_pep
     )
 
-    async def callback(self, ctx: crescent.Context) -> None:
-        if not (pep := pep_manager.get(self.pep_number)):
+    async def callback(self, ctx: Context) -> None:
+        if not (pep := pep_manager.get(self.pep)):
             await ctx.respond(
-                f"{self.pep_number} is not a valid PEP.", ephemeral=True
+                f"{self.pep} is not a valid PEP.", ephemeral=True
             )
             return
 

@@ -119,15 +119,11 @@ async def list(ctx: Context) -> None:
 async def on_start(_: hikari.StartingEvent) -> None:
     highlights = await Highlight.fetchmany()
 
-    for highlight, users in zip(
+    for highlight, user_highlights in zip(
         highlights,
-        await asyncio.gather(
-            *(highlight.users.fetchmany() for highlight in highlights)
-        ),
+        await asyncio.gather(*(UserHighlight.fetchmany(highlight_id=highlight.id) for highlight in highlights))
     ):
-        _cache_highlight(
-            highlight.highlight, *(user.user_id for user in users)
-        )
+        _cache_highlight(highlight.highlight, *(user_highlight.user_id for user_highlight in user_highlights))
 
 
 async def _dm_user_highlight(

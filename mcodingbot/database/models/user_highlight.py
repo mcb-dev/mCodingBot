@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING
-from apgorm import types, ForeignKey, Model
-from mcodingbot.database.converters import NumericConverter
+from apgorm import ForeignKey, Model, types
 
+from mcodingbot.database.converters import NumericConverter
 from mcodingbot.database.models.highlight import Highlight
 from mcodingbot.database.models.user import User
 

@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import asyncio
 from collections import defaultdict
-from asyncpg import UniqueViolationError
 
 import crescent
 import hikari
-from mcodingbot.utils import Plugin, Context
-from mcodingbot.database.models import User, Highlight, UserHighlight
+from asyncpg import UniqueViolationError
+
+from mcodingbot.database.models import Highlight, User, UserHighlight
+from mcodingbot.utils import Context, Plugin
 
 MAX_HIGHLIGHTS = 25
 MAX_HIGHLIGHT_LENGTH = 32
@@ -46,7 +47,8 @@ class CreateHighlight:
         total_highlights = await UserHighlight.count(user_id=ctx.user.id)
         if total_highlights >= MAX_HIGHLIGHTS:
             await ctx.respond(
-                f"You can only have {MAX_HIGHLIGHTS} highlights.", ephemeral=True
+                f"You can only have {MAX_HIGHLIGHTS} highlights.",
+                ephemeral=True,
             )
             return
 
@@ -121,9 +123,17 @@ async def on_start(_: hikari.StartingEvent) -> None:
 
     for highlight, user_highlights in zip(
         highlights,
-        await asyncio.gather(*(UserHighlight.fetchmany(highlight_id=highlight.id) for highlight in highlights))
+        await asyncio.gather(
+            *(
+                UserHighlight.fetchmany(highlight_id=highlight.id)
+                for highlight in highlights
+            )
+        ),
     ):
-        _cache_highlight(highlight.highlight, *(user_highlight.user_id for user_highlight in user_highlights))
+        _cache_highlight(
+            highlight.highlight,
+            *(user_highlight.user_id for user_highlight in user_highlights),
+        )
 
 
 async def _dm_user_highlight(

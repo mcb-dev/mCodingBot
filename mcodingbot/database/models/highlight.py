@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from apgorm import types, ManyToMany, Unique, Model
-from asyncpg.exceptions import UniqueViolationError
-
 from typing import TYPE_CHECKING
+
+from apgorm import ManyToMany, Model, Unique, types
+from asyncpg.exceptions import UniqueViolationError
 
 if TYPE_CHECKING:
     from mcodingbot.database.models.user import User
@@ -15,8 +15,11 @@ class Highlight(Model):
     highlight = types.VarChar(32).field()
     highlight_unique = Unique(highlight)
 
-    users = ManyToMany["User", "UserHighlight"](
-        "id", "user_highlights.highlight_id", "user_highlights.user_id", "users.user_id"
+    users: ManyToMany["User", "UserHighlight"] = ManyToMany(
+        "id",
+        "user_highlights.highlight_id",
+        "user_highlights.user_id",
+        "users.user_id",
     )
 
     primary_key = (id,)

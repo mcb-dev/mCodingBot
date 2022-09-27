@@ -6,17 +6,17 @@ from asyncpg.exceptions import UniqueViolationError
 
 from mcodingbot.database.converters import NumericConverter
 
-from mcodingbot.database.models.word import Word
+from mcodingbot.database.models.highlight import Highlight
 
 if TYPE_CHECKING:
-    from mcodingbot.database.models.user_word import UserWord
+    from mcodingbot.database.models.user_highlight import UserHighlight
 
 
 class User(Model):
     user_id = types.Numeric().field().with_converter(NumericConverter)
     is_donor = types.Boolean().field(default=False)
-    words = ManyToMany["Word", "UserWord"](
-        "user_id", "user_words.user_id", "user_words.word_id", "words.id"
+    highlights = ManyToMany["Highlight", "UserHighlight"](
+        "user_id", "user_highlights.user_id", "user_highlights.highlight_id", "highlights.id"
     )
 
     primary_key = (user_id,)

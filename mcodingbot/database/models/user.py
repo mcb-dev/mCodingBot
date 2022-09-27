@@ -27,9 +27,3 @@ class User(Model):
             return await User(user_id=user_id).create()
         except UniqueViolationError:
             return await User.fetch(user_id=user_id)
-
-    @staticmethod
-    async def add_word(word: str, user_id: int) -> None:
-        word_model = await Word.get_or_create(word=word)
-        user = await User.get_or_create(user_id=user_id)
-        await word_model.users.add(user)

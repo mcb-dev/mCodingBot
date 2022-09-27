@@ -1,6 +1,7 @@
 from __future__ import annotations
 import asyncio
 from collections import defaultdict
+from asyncpg import UniqueViolationError
 
 import crescent
 import hikari
@@ -36,10 +37,20 @@ class CreateHighlight:
                 "Highlights can not be longer than 32 characters."
             )
             return
-        await User.add_word(self.word, ctx.user.id)
-        await ctx.respond(f'Added "{self.word}" to your highlights.')
 
-        _cache_highlight(self.word, ctx.user.id)
+        word_model = await Word.get_or_create(word=self.word)
+        user = await User.get_or_create(user_id=ctx.user.id)
+
+        try:
+            await word_model.users.add(user)
+        except UniqueViolationError:
+            await ctx.respond(
+                f'"{self.word}" is already one of your highlights.',
+                ephemeral=True,
+            )
+        else:
+            await ctx.respond(f'Added "{self.word}" to your highlights.')
+            _cache_highlight(self.word, ctx.user.id)
 
 
 @plugin.include

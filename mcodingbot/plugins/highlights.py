@@ -9,8 +9,8 @@ import hikari
 from mcodingbot.utils import Plugin, Context
 from mcodingbot.database.models import User, Highlight, UserHighlight
 
-MAX_highlightS = 25
-MAX_highlight_LENGTH = 32
+MAX_HIGHLIGHTS = 25
+MAX_HIGHLIGHT_LENGTH = 32
 
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
@@ -36,7 +36,7 @@ class CreateHighlight:
     word = crescent.option(str, description="The regex for the highlight.")
 
     async def callback(self, ctx: Context) -> None:
-        if len(self.word) > MAX_highlight_LENGTH:
+        if len(self.word) > MAX_HIGHLIGHT_LENGTH:
             await ctx.respond(
                 "Highlights can not be longer than 32 characters.",
                 ephemeral=True,
@@ -44,9 +44,9 @@ class CreateHighlight:
             return
 
         total_highlights = await UserHighlight.count(user_id=ctx.user.id)
-        if total_highlights >= MAX_highlightS:
+        if total_highlights >= MAX_HIGHLIGHTS:
             await ctx.respond(
-                f"You can only have {MAX_highlightS} highlights.", ephemeral=True
+                f"You can only have {MAX_HIGHLIGHTS} highlights.", ephemeral=True
             )
             return
 

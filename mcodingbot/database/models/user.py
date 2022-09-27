@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import cast, final
 
 from apgorm import ForeignKey, ManyToMany, Model, Unique, types
 from asyncpg.exceptions import UniqueViolationError
@@ -7,7 +6,6 @@ from asyncpg.exceptions import UniqueViolationError
 from mcodingbot.database.converters import NumericConverter
 
 
-@final
 class User(Model):
     user_id = types.Numeric().field().with_converter(NumericConverter)
     is_donor = types.Boolean().field(default=False)
@@ -56,7 +54,6 @@ class User(Model):
         return True
 
 
-@final
 class Word(Model):
     id = types.Serial().field()
     word = types.VarChar(32).field()

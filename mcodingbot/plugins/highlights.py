@@ -1,12 +1,11 @@
 from __future__ import annotations
 import asyncio
 from collections import defaultdict
-import contextlib
 
 import crescent
 import hikari
 from mcodingbot.utils import Plugin, Context
-from mcodingbot.database.models import Word, User
+from mcodingbot.database.models import Word, User, UserWord
 
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
@@ -50,7 +49,18 @@ class DeleteHighlight:
     word = crescent.option(str, "The regex for the highlight.")
 
     async def callback(self, ctx: Context) -> None:
-        if await User.delete_word(self.word, ctx.user.id):
+        word = await Word.exists(word=self.word)
+
+        was_deleted = False
+        if word:
+            deleted_words = (
+                await UserWord.delete_query()
+                .where(word_id=word.id, user_id=ctx.user.id)
+                .execute()
+            )
+            was_deleted = bool(len(deleted_words))
+
+        if was_deleted:
             _uncache_highlight(self.word, ctx.user.id)
             await ctx.respond(f'Removed "{self.word}" from your highlights.')
             return

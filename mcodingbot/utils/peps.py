@@ -67,6 +67,8 @@ class PEPManager:
         self, query: str, *, limit: int | None = None
     ) -> Iterator[PEPInfo]:
         yielded = 0
+
+        items: Iterable[PEPInfo] = ()
         if query.isdigit():
             items, yielded = self._get_matches_digits(query, limit)
             yield from items
@@ -78,14 +80,14 @@ class PEPManager:
 
         for pep in res:
             pep_info = self.get(pep[2])
-            if not pep_info:
-                return
+            if not pep_info or pep_info in items:
+                continue
+
+            yield pep_info
+            yielded += 1
+
             if limit and yielded >= limit:
                 return
-            if pep_info in items:
-                continue
-            yielded += 1
-            yield pep_info
 
 
 @dataclass

@@ -6,7 +6,7 @@ import contextlib
 import crescent
 import hikari
 from mcodingbot.utils import Plugin, Context
-from mcodingbot.database.models.user import Word, User
+from mcodingbot.database.models import Word, User
 
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
@@ -27,9 +27,9 @@ def _uncache_highlight(word: str, *user_ids: hikari.Snowflake) -> None:
 
 @plugin.include
 @highlights_group.child
-@crescent.command(name="create")
+@crescent.command(name="create", description="Create a highlight.")
 class CreateHighlight:
-    word = crescent.option(str)
+    word = crescent.option(str, description="The regex for the highlight.")
 
     async def callback(self, ctx: Context) -> None:
         if len(self.word) > 32:
@@ -45,9 +45,9 @@ class CreateHighlight:
 
 @plugin.include
 @highlights_group.child
-@crescent.command(name="delete")
+@crescent.command(name="delete", description="Delete a highlight.")
 class DeleteHighlight:
-    word = crescent.option(str)
+    word = crescent.option(str, "The regex for the highlight.")
 
     async def callback(self, ctx: Context) -> None:
         if await User.delete_word(self.word, ctx.user.id):
@@ -60,7 +60,7 @@ class DeleteHighlight:
 
 @plugin.include
 @highlights_group.child
-@crescent.command(name="list")
+@crescent.command(name="list", description="List all of your highlights.")
 async def list(ctx: Context) -> None:
     user = await User.exists(user_id=ctx.user.id)
 

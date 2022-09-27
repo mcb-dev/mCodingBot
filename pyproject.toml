@@ -12,9 +12,9 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"
 hikari = "^2.0.0.dev110"
-hikari-crescent = "^0.3.2"
+hikari-crescent = "^0.3.3"
 apgorm = "^1.0.0b12"
-rapidfuzz = "^2.9.0"
+rapidfuzz = "^2.10.0"
 cachetools = "^5.2.0"
 types-cachetools = "^5.2.1"
 

@@ -6,7 +6,7 @@ from typing import TypeVar
 import apgorm
 
 from mcodingbot.config import CONFIG
-from mcodingbot.database.models.user import User, UserWord, Word
+from mcodingbot.database.models import User, UserWord, Word
 
 _LOGGER = logging.getLogger(__name__)
 _SELF = TypeVar("_SELF", bound="Database")

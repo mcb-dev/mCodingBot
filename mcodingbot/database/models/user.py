@@ -1,9 +1,15 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
-from apgorm import ForeignKey, ManyToMany, Model, Unique, types
+from apgorm import ManyToMany, Model, types
 from asyncpg.exceptions import UniqueViolationError
 
 from mcodingbot.database.converters import NumericConverter
+from mcodingbot.database.models.word import Word
+
+
+if TYPE_CHECKING:
+    from mcodingbot.database.models.user_word import UserWord
 
 
 class User(Model):
@@ -52,32 +58,3 @@ class User(Model):
 
         await user.words.remove(word_model)
         return True
-
-
-class Word(Model):
-    id = types.Serial().field()
-    word = types.VarChar(32).field()
-    word_unique = Unique(word)
-
-    users = ManyToMany["User", "UserWord"](
-        "id", "user_words.word_id", "user_words.user_id", "users.user_id"
-    )
-
-    primary_key = (id,)
-
-    @staticmethod
-    async def get_or_create(word: str) -> Word:
-        try:
-            return await Word(word=word).create()
-        except UniqueViolationError:
-            return await Word.fetch(word=word)
-
-
-class UserWord(Model):
-    word_id = types.Serial().field()
-    user_id = types.Numeric().field().with_converter(NumericConverter)
-
-    word_id_fk = ForeignKey(word_id, Word.id)
-    user_id_fk = ForeignKey(user_id, User.user_id)
-
-    primary_key = (word_id, user_id)

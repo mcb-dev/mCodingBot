@@ -8,6 +8,9 @@ import hikari
 from mcodingbot.utils import Plugin, Context
 from mcodingbot.database.models import Word, User, UserWord
 
+MAX_WORDS = 25
+MAX_WORD_LENGTH = 32
+
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
 highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
@@ -32,9 +35,17 @@ class CreateHighlight:
     word = crescent.option(str, description="The regex for the highlight.")
 
     async def callback(self, ctx: Context) -> None:
-        if len(self.word) > 32:
+        if len(self.word) > MAX_WORD_LENGTH:
             await ctx.respond(
-                "Highlights can not be longer than 32 characters."
+                "Highlights can not be longer than 32 characters.",
+                ephemeral=True,
+            )
+            return
+
+        total_words = await UserWord.count(user_id=ctx.user.id)
+        if total_words >= MAX_WORDS:
+            await ctx.respond(
+                f"You can only have {MAX_WORDS} highlights.", ephemeral=True
             )
             return
 

@@ -76,7 +76,9 @@ class DeleteHighlight:
             await ctx.respond(f'Removed "{self.word}" from your highlights.')
             return
 
-        await ctx.respond(f'"{self.word}" was not one of your highlights.')
+        await ctx.respond(
+            f'"{self.word}" was not one of your highlights.', ephemeral=True
+        )
 
 
 @plugin.include

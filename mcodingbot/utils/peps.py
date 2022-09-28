@@ -108,7 +108,7 @@ class PEPInfo:
     def truncated_title(self) -> str:
         pep_digits = len(str(self.number))
 
-        # 3 is the length two parenthesis and the space used to seperate the
+        # 3 is the length of two parentheses and the space used to separate the
         # pep number from the pep title.
         max_name_length = 100 - pep_digits - 3
 

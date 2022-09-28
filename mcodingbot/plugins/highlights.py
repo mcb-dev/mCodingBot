@@ -152,6 +152,8 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     for highlight, users in highlights_cache.items():
         if highlight in event.content.split():
             for user_id in users:
+                if user_id == event.author.id:
+                    continue
                 asyncio.ensure_future(
                     _dm_user_highlight(
                         user_id=user_id,

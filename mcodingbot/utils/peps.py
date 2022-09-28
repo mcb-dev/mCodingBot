@@ -114,7 +114,7 @@ class PEPInfo:
 
         name = self.title
         if len(name) > max_name_length:
-            # An extra 3 chars need to be removed to make space for the
+            # An extra 3 chars needed to be removed to make space for the
             # ellipsis.
             name = f"{self.title[:max_name_length - 3]}..."
 

@@ -28,7 +28,7 @@ Once the config is setup, you can run the bot with `poetry run python3 -m mcodin
 
 ## Contributing
 
-To create a pull request to mCodingBall, first create a new branch for your changes.
+To create a pull request to mCodingBot, first create a new branch for your changes.
 
 ```
 git checkout -b <new-branch-name>

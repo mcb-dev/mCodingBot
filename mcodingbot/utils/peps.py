@@ -51,7 +51,7 @@ class PEPManager:
 
     def _get_matches_digits(
         self, query: str, limit: int | None
-    ) -> tuple[Iterable[PEPInfo], int]:
+    ) -> tuple[list[PEPInfo], int]:
         """
         Returns a tuple of (Items found, Amount of items found).
         """

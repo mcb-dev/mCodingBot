@@ -128,7 +128,7 @@ def strip_trailing_zeros(n: int | float) -> int | float:
 
 
 def truncate_decimals(number: int | float, ndigits: int = 0) -> float:
-    n: int | float = 10**ndigits
+    n: int | float = 10 ** ndigits
     return int(number * n) / n
 
 

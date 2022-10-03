@@ -10,7 +10,7 @@ authors = ["Your Name <you@example.com>"]
 license = "MIT"
 
 [tool.poetry.scripts]
-mcodingbot = "mcodingbot.__main__:main"
+bot = "mcodingbot.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"

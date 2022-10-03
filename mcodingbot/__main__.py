@@ -1,7 +1,7 @@
 from mcodingbot.bot import Bot
 
 
-def main():
+def main() -> None:
     Bot().run()
 
 

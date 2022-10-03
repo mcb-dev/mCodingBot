@@ -1,6 +1,6 @@
 [tool.black]
-line-length=79
-skip-magic-trailing-comma=true
+line-length = 79
+skip-magic-trailing-comma = true
 
 [tool.poetry]
 name = "mcodingbot"
@@ -8,6 +8,9 @@ version = "0.1.0"
 description = "The Discord bot for the mCoding Discord server."
 authors = ["Your Name <you@example.com>"]
 license = "MIT"
+
+[tool.poetry.scripts]
+bot = "mcodingbot.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"

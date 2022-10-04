@@ -37,12 +37,12 @@ async def update_channels(bot: Bot) -> None:
     member_channel = bot.cache.get_guild_channel(CONFIG.member_count_channel)
 
     if sub_channel:
-        await sub_channel.edit(name=f"{display_stats(stats.subs)} subs")
+        await sub_channel.edit(name=f"Subs: {display_stats(stats.subs)}")
     else:
         LOGGER.warning("No sub count channel to update stats for.")
 
     if view_channel:
-        await view_channel.edit(name=f"{display_stats(stats.views)} views")
+        await view_channel.edit(name=f"Views: {display_stats(stats.views)}")
     else:
         LOGGER.warning("No view count channel to update stats for.")
 
@@ -65,7 +65,7 @@ async def update_channels(bot: Bot) -> None:
     # never updated after the bot first starts.
     member_count = max(guild_approx_members, cached_members)
 
-    await member_channel.edit(name=f"{display_stats(member_count)} members")
+    await member_channel.edit(name=f"Members: {display_stats(member_count)}")
 
 
 @dataclass

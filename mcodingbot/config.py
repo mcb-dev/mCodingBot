@@ -32,6 +32,7 @@ class Config:
     )
     mcoding_repo: str = "https://github.com/mCodingLLC/VideosSampleCode"
     mcodingbot_repo: str = "https://github.com/mcb-dev/mCodingBot"
+    mcoding_site: str = "https://mcoding.io"
 
     def save(self) -> None:
         pth = Path("config.json")

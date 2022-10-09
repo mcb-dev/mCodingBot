@@ -22,7 +22,8 @@ async def links(ctx: Context) -> None:
         description=(
             f"**[mCoding Youtube]({CONFIG.mcoding_youtube})**\n"
             f"**[mCoding repo]({CONFIG.mcoding_repo})**\n"
-            f"**[mCodingBot repo]({CONFIG.mcodingbot_repo})**"
+            f"**[mCoding site]({CONFIG.mcoding_site})**"
+            f"**[mCodingBot repo]({CONFIG.mcodingbot_repo})**\n"
         ),
     )
     await ctx.respond(embed=embed)

@@ -36,11 +36,11 @@ git checkout -b <new-branch-name>
 
 Then, open the source in your editor of choice, and make changes. After making changes, make sure that they pass the pipelines by running `nox`.
 
-```
-poetry run nox  # run all pipelines
-poetry run nox -s mypy  # check only the mypy pipeline
+```bash
+poetry run nox                # run all pipelines
+poetry run nox -s mypy        # check only the mypy pipeline
 poetry run nox -s apply-lint  # run black and isort
-poetry run nos -s lint  # checks if flake8, black, and isort all pass
+poetry run nos -s lint        # checks if flake8, black, and isort all pass
 ```
 
 The `mypy` and `lint` pipelines must pass for any PR to be accepted.

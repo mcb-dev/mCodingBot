@@ -51,7 +51,7 @@ making changes, make sure that they pass the pipelines by running `nox`.
 poetry run nox                # run all pipelines
 poetry run nox -s mypy        # check only the mypy pipeline
 poetry run nox -s apply-lint  # run black and isort
-poetry run nos -s lint        # checks if flake8, black, and isort all pass
+poetry run nox -s lint        # checks if flake8, black, and isort all pass
 ```
 
 The `mypy` and `lint` pipelines must pass for any PR to be accepted.

@@ -34,7 +34,7 @@ To create a pull request to mCodingBot, first create a new branch for your chang
 git checkout -b <new-branch-name>
 ```
 
-Then, open the source in your editor of choice, and make changes. After making changes, make sure that they pass the pipelines by running `nox`.
+Then, open the repository in your editor of choice, and make changes. After making changes, make sure that they pass the pipelines by running `nox`.
 
 ```bash
 poetry run nox                # run all pipelines

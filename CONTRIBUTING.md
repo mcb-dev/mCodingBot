@@ -28,9 +28,9 @@ database called `mcodingbot` that is owned by that user.
 
 To run the bot, you first need to set up your `config.json` file. Look at
 [config.json.example](https://github.com/mcb-dev/mCodingBot/blob/main/config.json.example)
-for an example configuration. Make sure to set `no_db_mode: true` if you chose not to
-set up Postgres. If you did set up Postgres, you only need to put your password
-(if any) in the `config.json`.
+for an example configuration. Make sure to set `no_db_mode: true` if you chose
+not to set up Postgres. If you did set up Postgres, you only need to put your
+password (if any) in the `config.json`.
 
 Once the config is set up, you can run the bot with
 `poetry run python3 -m mcodingbot`.

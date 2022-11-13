@@ -12,7 +12,10 @@ from crescent.ext import tasks
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Context, PEPManager, Plugin
 
-PEP_REGEX = re.compile(r"pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE)
+PEP_REGEX = re.compile(
+    r"(?<!https:\/\/peps\.python\.org\/)pep[\s-]*(?P<pep>\d{1,4}\b)",
+    re.IGNORECASE,
+)
 DISMISS_BUTTON_ID = "dismiss"
 MAX_AGE_FOR_SEND = timedelta(minutes=1)
 MAX_AGE_FOR_EDIT = timedelta(minutes=5)
@@ -47,12 +50,10 @@ async def autocomplete_pep(
     if not option.value:
         return []
 
-    results = pep_manager.search(str(option.value), limit=20)
+    results = pep_manager.search(str(option.value), limit=25)
 
     return [
-        hikari.CommandChoice(
-            name=f"{pep.title} ({pep.number})", value=pep.number
-        )
+        hikari.CommandChoice(name=pep.truncated_title, value=pep.number)
         for pep in results
     ]
 

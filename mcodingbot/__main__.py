@@ -1,4 +1,9 @@
 from mcodingbot.bot import Bot
 
-if __name__ == "__main__":
+
+def main() -> None:
     Bot().run()
+
+
+if __name__ == "__main__":
+    main()

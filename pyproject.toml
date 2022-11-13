@@ -26,7 +26,7 @@ nox = "^2022.8.7"
 flake8 = "^5.0.4"
 black = "^22.8.0"
 isort = "^5.10.1"
-mypy = "^0.982"
+mypy = "^0.990"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

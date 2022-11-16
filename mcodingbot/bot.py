@@ -18,7 +18,9 @@ class Bot(crescent.Bot):
         super().__init__(
             token=CONFIG.discord_token,
             intents=(
-                hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS
+                hikari.Intents.ALL_UNPRIVILEGED
+                | hikari.Intents.GUILD_MEMBERS
+                | hikari.Intents.MESSAGE_CONTENT
             ),
         )
 

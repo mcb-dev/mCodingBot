@@ -7,6 +7,7 @@ import crescent
 import hikari
 from asyncpg import UniqueViolationError
 
+from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
 from mcodingbot.utils import Context, Plugin
 
@@ -111,9 +112,12 @@ async def list(ctx: Context) -> None:
         await ctx.respond("You do not have any highlights.")
         return
 
-    await ctx.respond(
-        "\n".join(highlight.highlight for highlight in highlights)
+    embed = hikari.Embed(
+        title="Your Highlights",
+        description="\n".join(hl.highlight for hl in highlights),
+        color=CONFIG.theme,
     )
+    await ctx.respond(embed=embed)
 
 
 @plugin.include

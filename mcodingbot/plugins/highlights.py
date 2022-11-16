@@ -141,10 +141,22 @@ async def on_start(_: hikari.StartingEvent) -> None:
 
 
 async def _dm_user_highlight(
-    user_id: hikari.Snowflake, highlight: str, msg_link: str
+    triggering_message: hikari.Message, trigger: str, user_id: int
 ) -> None:
+    _avatar_url = triggering_message.author.avatar_url
+    avatar_url = _avatar_url.url if _avatar_url else None
+    embed = (
+        hikari.Embed(
+            title="Highlight Triggered",
+            url=triggering_message.make_link(CONFIG.mcoding_server),
+            description=triggering_message.content,
+            color=CONFIG.theme,
+        )
+        .set_footer(f"Highlight: {trigger}")
+        .set_author(name=triggering_message.author.username, icon=avatar_url)
+    )
     channel = await plugin.app.rest.create_dm_channel(user_id)
-    await channel.send(f"Highlight found: {highlight}\n{msg_link}")
+    await channel.send(embed=embed)
 
 
 @plugin.include
@@ -160,8 +172,8 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
                     continue
                 asyncio.ensure_future(
                     _dm_user_highlight(
+                        triggering_message=event.message,
+                        trigger=highlight,
                         user_id=user_id,
-                        highlight=highlight,
-                        msg_link=event.message.make_link(event.guild_id),
                     )
                 )

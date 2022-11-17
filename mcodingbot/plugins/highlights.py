@@ -64,7 +64,9 @@ class CreateHighlight:
                 ephemeral=True,
             )
         else:
-            await ctx.respond(f'Added "{self.word}" to your highlights.')
+            await ctx.respond(
+                f'Added "{self.word}" to your highlights.', ephemeral=True
+            )
             _cache_highlight(self.word, ctx.user.id)
 
 
@@ -88,7 +90,9 @@ class DeleteHighlight:
 
         if was_deleted:
             _uncache_highlight(self.word, ctx.user.id)
-            await ctx.respond(f'Removed "{self.word}" from your highlights.')
+            await ctx.respond(
+                f'Removed "{self.word}" from your highlights.', ephemeral=True
+            )
             return
 
         await ctx.respond(
@@ -103,13 +107,13 @@ async def list(ctx: Context) -> None:
     user = await User.exists(user_id=ctx.user.id)
 
     if user is None:
-        await ctx.respond("You do not have any highlights.")
+        await ctx.respond("You do not have any highlights.", ephemeral=True)
         return
 
     highlights = await user.highlights.fetchmany()
 
     if not highlights:
-        await ctx.respond("You do not have any highlights.")
+        await ctx.respond("You do not have any highlights.", ephemeral=True)
         return
 
     embed = hikari.Embed(

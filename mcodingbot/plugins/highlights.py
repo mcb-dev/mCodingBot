@@ -103,7 +103,7 @@ class DeleteHighlight:
 @plugin.include
 @highlights_group.child
 @crescent.command(name="list", description="List all of your highlights.")
-async def list(ctx: Context) -> None:
+async def list_highlights(ctx: Context) -> None:
     user = await User.exists(user_id=ctx.user.id)
 
     if user is None:
@@ -145,7 +145,7 @@ async def on_start(_: hikari.StartingEvent) -> None:
 
 
 async def _dm_user_highlight(
-    triggering_message: hikari.Message, trigger: str, user_id: int
+    triggering_message: hikari.Message, triggers: list[str], user_id: int
 ) -> None:
     _avatar_url = triggering_message.author.avatar_url
     avatar_url = _avatar_url.url if _avatar_url else None
@@ -156,7 +156,7 @@ async def _dm_user_highlight(
             description=triggering_message.content,
             color=CONFIG.theme,
         )
-        .set_footer(f"Highlight: {trigger}")
+        .set_footer(f"Highlight(s): {', '.join(triggers)}")
         .set_author(name=triggering_message.author.username, icon=avatar_url)
     )
     channel = await plugin.app.rest.create_dm_channel(user_id)
@@ -169,15 +169,18 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     if not event.content or event.is_bot:
         return
 
+    highlights: defaultdict[hikari.Snowflake, list[str]] = defaultdict(list)
+
     for highlight, users in highlights_cache.items():
         if highlight in event.content:
             for user_id in users:
                 if user_id == event.author.id:
                     continue
-                asyncio.ensure_future(
-                    _dm_user_highlight(
-                        triggering_message=event.message,
-                        trigger=highlight,
-                        user_id=user_id,
-                    )
-                )
+                highlights[user_id].append(highlight)
+
+    for user_id, hls in highlights.items():
+        asyncio.ensure_future(
+            _dm_user_highlight(
+                triggering_message=event.message, triggers=hls, user_id=user_id
+            )
+        )

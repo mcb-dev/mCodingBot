@@ -120,9 +120,8 @@ async def list(ctx: Context) -> None:
         title="Your Highlights",
         description="\n".join(hl.highlight for hl in highlights),
         color=CONFIG.theme,
-        ephemeral=True,
     )
-    await ctx.respond(embed=embed)
+    await ctx.respond(embed=embed, ephemeral=True)
 
 
 @plugin.include

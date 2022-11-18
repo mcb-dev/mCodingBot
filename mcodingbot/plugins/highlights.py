@@ -19,7 +19,7 @@ plugin = Plugin()
 highlights_group = crescent.Group("highlights")
 highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
 sent_message_cooldown: FixedCooldown[tuple[int, int]] = FixedCooldown(
-    *CONFIG.message_sent_cooldown
+    *CONFIG.highlight_message_sent_cooldown
 )
 trigger_cooldown: FixedCooldown[tuple[int, str]] = FixedCooldown(
     *CONFIG.highlight_trigger_cooldown

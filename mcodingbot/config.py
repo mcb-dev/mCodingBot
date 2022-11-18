@@ -24,6 +24,10 @@ class Config:
     patron_role: int = -1
     donor_role: int = -1
 
+    # capacity, cooldown
+    highlight_message_sent_cooldown: tuple[float, float] = (1, 60)
+    highlight_trigger_cooldown: tuple[float, float] = (1, 30)
+
     mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
     yt_api_key: str = "YOUTUBE_API_KEY"
 

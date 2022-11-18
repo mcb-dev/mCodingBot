@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import asyncio
 from collections import defaultdict
+from typing import NamedTuple
 
 import crescent
 import hikari
 from asyncpg import UniqueViolationError
+from pycooldown import FixedCooldown
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
@@ -14,9 +16,26 @@ from mcodingbot.utils import Context, Plugin
 MAX_HIGHLIGHTS = 25
 MAX_HIGHLIGHT_LENGTH = 32
 
+
+class SentMessageBucket(NamedTuple):
+    user: int
+    channel: int
+
+
+class TriggerBucket(NamedTuple):
+    channel: int
+    highlight: str
+
+
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
 highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
+sent_message_cooldown: FixedCooldown[SentMessageBucket] = FixedCooldown(
+    *CONFIG.highlight_message_sent_cooldown
+)
+trigger_cooldown: FixedCooldown[TriggerBucket] = FixedCooldown(
+    *CONFIG.highlight_trigger_cooldown
+)
 
 
 def _cache_highlight(highlight: str, *user_ids: hikari.Snowflake) -> None:
@@ -103,7 +122,7 @@ class DeleteHighlight:
 @plugin.include
 @highlights_group.child
 @crescent.command(name="list", description="List all of your highlights.")
-async def list(ctx: Context) -> None:
+async def list_highlights(ctx: Context) -> None:
     user = await User.exists(user_id=ctx.user.id)
 
     if user is None:
@@ -145,7 +164,7 @@ async def on_start(_: hikari.StartingEvent) -> None:
 
 
 async def _dm_user_highlight(
-    triggering_message: hikari.Message, trigger: str, user_id: int
+    triggering_message: hikari.Message, triggers: list[str], user_id: int
 ) -> None:
     _avatar_url = triggering_message.author.avatar_url
     avatar_url = _avatar_url.url if _avatar_url else None
@@ -156,7 +175,7 @@ async def _dm_user_highlight(
             description=triggering_message.content,
             color=CONFIG.theme,
         )
-        .set_footer(f"Highlight: {trigger}")
+        .set_footer(f"Highlight(s): {', '.join(triggers)}")
         .set_author(name=triggering_message.author.username, icon=avatar_url)
     )
     channel = await plugin.app.rest.create_dm_channel(user_id)
@@ -166,18 +185,48 @@ async def _dm_user_highlight(
 @plugin.include
 @crescent.event
 async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
-    if not event.content or event.is_bot:
+    if event.is_bot:
         return
+
+    bucket = sent_message_cooldown.get_bucket(
+        SentMessageBucket(user=event.author_id, channel=event.channel_id)
+    )
+    # we need to reset the bucket, because calling update_ratelimit
+    # only updates the limit if retry_after is none. Adding a `force`
+    # kwarg is probably something that should be PRed for pycooldown.
+    bucket.reset()
+    retry_after = bucket.update_ratelimit()
+    assert retry_after is None, "bucket failed to reset"
+
+    if not event.content:
+        return
+
+    highlights: defaultdict[hikari.Snowflake, list[str]] = defaultdict(list)
 
     for highlight, users in highlights_cache.items():
         if highlight in event.content:
+            retry_after = trigger_cooldown.update_ratelimit(
+                TriggerBucket(channel=event.channel_id, highlight=highlight)
+            )
+            if retry_after:
+                # this highlight has been triggered in this channel too
+                # many times, so it's on cooldown.
+                continue
+
             for user_id in users:
                 if user_id == event.author.id:
                     continue
-                asyncio.ensure_future(
-                    _dm_user_highlight(
-                        triggering_message=event.message,
-                        trigger=highlight,
-                        user_id=user_id,
-                    )
-                )
+                highlights[user_id].append(highlight)
+
+    for user_id, hls in highlights.items():
+        if sent_message_cooldown.get_retry_after(
+            SentMessageBucket(user=user_id, channel=event.channel_id)
+        ):
+            # the user has sent messages in this channel, so highlights are
+            # not active for them in this channel.
+            continue
+        asyncio.ensure_future(
+            _dm_user_highlight(
+                triggering_message=event.message, triggers=hls, user_id=user_id
+            )
+        )

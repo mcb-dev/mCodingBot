@@ -34,6 +34,25 @@ class Bot(crescent.Bot):
                 "Server stats and donor roles will not be updated because"
                 " the mcoding server id is not provided. Is this intended?"
             )
+        else:
+            if not CONFIG.sub_count_channel:
+                _LOG.warning(
+                    "Sub count channel id for mcoding required to post stats."
+                )
+            if not CONFIG.view_count_channel:
+                _LOG.warning(
+                    "View count channel id for mcoding required to post stats."
+                )
+            if not CONFIG.member_count_channel:
+                _LOG.warning(
+                    "Member count channel id for mcoding required to post"
+                    " stats."
+                )
+            if not CONFIG.donor_role:
+                _LOG.warning(
+                    "Doner role id for mcoding server expected to update"
+                    "donor roles."
+                )
 
     @property
     def session(self) -> aiohttp.ClientSession:

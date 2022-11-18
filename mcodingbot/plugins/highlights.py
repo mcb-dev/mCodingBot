@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from collections import defaultdict
+from typing import NamedTuple
 
 import crescent
 import hikari
@@ -15,13 +16,24 @@ from mcodingbot.utils import Context, Plugin
 MAX_HIGHLIGHTS = 25
 MAX_HIGHLIGHT_LENGTH = 32
 
+
+class MessageBucket(NamedTuple):
+    user: int
+    channel: int
+
+
+class TriggerBucket(NamedTuple):
+    channel: int
+    highlight: str
+
+
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
 highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
-sent_message_cooldown: FixedCooldown[tuple[int, int]] = FixedCooldown(
+sent_message_cooldown: FixedCooldown[MessageBucket] = FixedCooldown(
     *CONFIG.highlight_message_sent_cooldown
 )
-trigger_cooldown: FixedCooldown[tuple[int, str]] = FixedCooldown(
+trigger_cooldown: FixedCooldown[TriggerBucket] = FixedCooldown(
     *CONFIG.highlight_trigger_cooldown
 )
 
@@ -177,7 +189,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
         return
 
     bucket = sent_message_cooldown.get_bucket(
-        (event.author_id, event.channel_id)
+        MessageBucket(user=event.author_id, channel=event.channel_id)
     )
     # we need to reset the bucket, because calling update_ratelimit
     # only updates the limit if retry_after is none. Adding a `force`
@@ -194,7 +206,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     for highlight, users in highlights_cache.items():
         if highlight in event.content:
             retry_after = trigger_cooldown.update_ratelimit(
-                (event.channel_id, highlight)
+                TriggerBucket(channel=event.channel_id, highlight=highlight)
             )
             if retry_after:
                 # this highlight has been triggered in this channel too
@@ -207,7 +219,9 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
                 highlights[user_id].append(highlight)
 
     for user_id, hls in highlights.items():
-        if sent_message_cooldown.get_retry_after((user_id, event.channel_id)):
+        if sent_message_cooldown.get_retry_after(
+            MessageBucket(user=user_id, channel=event.channel_id)
+        ):
             # the user has sent messages in this channel, so highlights are
             # not active for them in this channel.
             continue

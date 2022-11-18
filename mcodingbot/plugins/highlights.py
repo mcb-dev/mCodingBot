@@ -6,6 +6,7 @@ from collections import defaultdict
 import crescent
 import hikari
 from asyncpg import UniqueViolationError
+from pycooldown import FixedCooldown
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
@@ -17,6 +18,9 @@ MAX_HIGHLIGHT_LENGTH = 32
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
 highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
+sent_message_cooldown: FixedCooldown[tuple[int, int]] = FixedCooldown(
+    *CONFIG.message_sent_cooldown
+)
 
 
 def _cache_highlight(highlight: str, *user_ids: hikari.Snowflake) -> None:
@@ -166,7 +170,20 @@ async def _dm_user_highlight(
 @plugin.include
 @crescent.event
 async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
-    if not event.content or event.is_bot:
+    if event.is_bot:
+        return
+
+    bucket = sent_message_cooldown.get_bucket(
+        (event.author_id, event.channel_id)
+    )
+    # we need to reset the bucket, because calling update_ratelimit
+    # only updates the limit if retry_after is none. Adding a `force`
+    # kwarg is probably something that should be PRed for pycooldown.
+    bucket.reset()
+    retry_after = bucket.update_ratelimit()
+    assert retry_after is None, "bucket failed to reset"
+
+    if not event.content:
         return
 
     highlights: defaultdict[hikari.Snowflake, list[str]] = defaultdict(list)
@@ -179,6 +196,12 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
                 highlights[user_id].append(highlight)
 
     for user_id, hls in highlights.items():
+        if (
+            sent_message_cooldown.get_retry_after((user_id, event.channel_id))
+            != 0
+        ):
+            # the user has sent a message within the last minute
+            continue
         asyncio.ensure_future(
             _dm_user_highlight(
                 triggering_message=event.message, triggers=hls, user_id=user_id

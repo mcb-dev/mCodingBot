@@ -20,6 +20,7 @@ apgorm = "^1.0.0b12"
 rapidfuzz = "^2.10.0"
 cachetools = "^5.2.0"
 types-cachetools = "^5.2.1"
+pycooldown = "^0.1.0b9"
 
 [tool.poetry.dev-dependencies]
 nox = "^2022.8.7"

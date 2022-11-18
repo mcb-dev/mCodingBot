@@ -30,6 +30,23 @@ async def loop() -> None:
 
 
 async def update_channels(bot: Bot) -> None:
+    if not CONFIG.mcoding_server:
+        LOGGER.warning(
+            "Could not update channel stats because mcoding server id was not"
+            " provided. Is this intended?"
+        )
+        return
+
+    assert (
+        CONFIG.sub_count_channel
+    ), "sub count channel id for mcoding server expected."
+    assert (
+        CONFIG.view_count_channel
+    ), "view count channel id for mcoding server expected."
+    assert (
+        CONFIG.member_count_channel
+    ), "member count channel id for mcoding server expected."
+
     stats = await get_stats(bot)
 
     sub_channel = bot.cache.get_guild_channel(CONFIG.sub_count_channel)

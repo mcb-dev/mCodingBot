@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from logging import getLogger
 
 import crescent
 import hikari
@@ -9,6 +10,8 @@ from crescent.ext import tasks
 from mcodingbot.config import CONFIG
 from mcodingbot.database.models.user import User
 from mcodingbot.utils import Context, Plugin
+
+LOGGER = getLogger(__name__)
 
 plugin = Plugin()
 
@@ -49,6 +52,9 @@ async def on_member_update(event: hikari.MemberUpdateEvent) -> None:
 @plugin.include
 @tasks.loop(hours=1)
 async def add_donor_role() -> None:
+    if not CONFIG.mcoding_server:
+        return
+
     role_add_tasks: list[asyncio.Task[None]] = []
     for member in plugin.app.cache.get_members_view_for_guild(
         CONFIG.mcoding_server
@@ -82,6 +88,15 @@ async def _is_donor(member: hikari.Member) -> bool:
 async def _update_donor_role(
     member: int | hikari.Member, is_donor: bool
 ) -> None:
+    if not CONFIG.mcoding_server:
+        LOGGER.warning(
+            "Could not update donor roles because mcoding server id was not"
+            " provieded. Is this intended?"
+        )
+        return
+
+    assert CONFIG.donor_role, "doner role id for mcoding server expected."
+
     user_id = int(member)
     user = await User.get_or_create(user_id)
     user.is_donor = is_donor

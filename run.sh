@@ -3,6 +3,7 @@
 while true
 do
     git pull
+    "${1:-python}" -m poetry update
     "${1:-python}" -m poetry install
     "${1:-python}" -m poetry run python -m mcodingbot
 

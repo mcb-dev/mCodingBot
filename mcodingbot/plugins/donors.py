@@ -89,10 +89,6 @@ async def _update_donor_role(
     member: int | hikari.Member, is_donor: bool
 ) -> None:
     if not CONFIG.mcoding_server:
-        LOGGER.warning(
-            "Could not update donor roles because mcoding server id was not"
-            " provieded. Is this intended?"
-        )
         return
 
     assert CONFIG.donor_role, "doner role id for mcoding server expected."

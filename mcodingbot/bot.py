@@ -29,6 +29,12 @@ class Bot(crescent.Bot):
         self._session: aiohttp.ClientSession | None = None
         self._db: Database | None = None
 
+        if not CONFIG.mcoding_server:
+            _LOG.warning(
+                "Server stats and donor roles will not be updated because"
+                " the mcoding server id is not provided. Is this intended?"
+            )
+
     @property
     def session(self) -> aiohttp.ClientSession:
         if not self._session:

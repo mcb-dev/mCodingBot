@@ -31,10 +31,6 @@ async def loop() -> None:
 
 async def update_channels(bot: Bot) -> None:
     if not CONFIG.mcoding_server:
-        LOGGER.warning(
-            "Could not update channel stats because mcoding server id was not"
-            " provided. Is this intended?"
-        )
         return
 
     assert (

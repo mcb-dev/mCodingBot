@@ -17,7 +17,7 @@ MAX_HIGHLIGHTS = 25
 MAX_HIGHLIGHT_LENGTH = 32
 
 
-class MessageBucket(NamedTuple):
+class UserChannelBucket(NamedTuple):
     user: int
     channel: int
 
@@ -30,7 +30,7 @@ class TriggerBucket(NamedTuple):
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
 highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
-sent_message_cooldown: FixedCooldown[MessageBucket] = FixedCooldown(
+sent_message_cooldown: FixedCooldown[UserChannelBucket] = FixedCooldown(
     *CONFIG.highlight_message_sent_cooldown
 )
 trigger_cooldown: FixedCooldown[TriggerBucket] = FixedCooldown(
@@ -189,7 +189,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
         return
 
     bucket = sent_message_cooldown.get_bucket(
-        MessageBucket(user=event.author_id, channel=event.channel_id)
+        UserChannelBucket(user=event.author_id, channel=event.channel_id)
     )
     # we need to reset the bucket, because calling update_ratelimit
     # only updates the limit if retry_after is none. Adding a `force`
@@ -220,7 +220,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
 
     for user_id, hls in highlights.items():
         if sent_message_cooldown.get_retry_after(
-            MessageBucket(user=user_id, channel=event.channel_id)
+            UserChannelBucket(user=user_id, channel=event.channel_id)
         ):
             # the user has sent messages in this channel, so highlights are
             # not active for them in this channel.

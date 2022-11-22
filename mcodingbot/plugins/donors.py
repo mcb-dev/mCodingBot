@@ -91,7 +91,8 @@ async def _update_donor_role(
     if not CONFIG.mcoding_server:
         return
 
-    assert CONFIG.donor_role
+    if not CONFIG.donor_role:
+        return
 
     user_id = int(member)
     user = await User.get_or_create(user_id)

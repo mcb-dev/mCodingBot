@@ -35,13 +35,22 @@ async def update_channels(bot: Bot) -> None:
 
     stats = await get_stats(bot)
 
-    assert CONFIG.sub_count_channel
-    assert CONFIG.view_count_channel
-    assert CONFIG.member_count_channel
+    if CONFIG.sub_count_channel:
+        sub_channel = bot.cache.get_guild_channel(CONFIG.sub_count_channel)
+    else:
+        sub_channel = None
 
-    sub_channel = bot.cache.get_guild_channel(CONFIG.sub_count_channel)
-    view_channel = bot.cache.get_guild_channel(CONFIG.view_count_channel)
-    member_channel = bot.cache.get_guild_channel(CONFIG.member_count_channel)
+    if CONFIG.view_count_channel:
+        view_channel = bot.cache.get_guild_channel(CONFIG.view_count_channel)
+    else:
+        view_channel = None
+
+    if CONFIG.member_count_channel:
+        member_channel = bot.cache.get_guild_channel(
+            CONFIG.member_count_channel
+        )
+    else:
+        member_channel = None
 
     if sub_channel:
         await sub_channel.edit(name=f"Subs: {display_stats(stats.subs)}")

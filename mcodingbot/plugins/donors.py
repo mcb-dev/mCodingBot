@@ -88,12 +88,8 @@ async def _is_donor(member: hikari.Member) -> bool:
 async def _update_donor_role(
     member: int | hikari.Member, is_donor: bool
 ) -> None:
-    if not CONFIG.mcoding_server:
+    if not (CONFIG.mcoding_server and CONFIG.donor_role):
         return
-
-    if not CONFIG.donor_role:
-        return
-
     user_id = int(member)
     user = await User.get_or_create(user_id)
     user.is_donor = is_donor

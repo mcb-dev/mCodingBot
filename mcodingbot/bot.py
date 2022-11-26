@@ -36,7 +36,7 @@ class Bot(crescent.Bot):
         if not CONFIG.mcoding_server:
             _LOG.warning(
                 "Server stats and donor roles will not be updated because"
-                " the mcoding server id is not provided. Is this intended?"
+                " `mcoding_server` is not provided. Is this intended?"
             )
         else:
             if not CONFIG.sub_count_channel:

@@ -13,6 +13,10 @@ from mcodingbot.database.database import Database
 _LOG = logging.getLogger(__name__)
 
 
+def _warn_missing_config(variable: str, feature: str) -> None:
+    _LOG.warning(f"`{variable}` is required to {feature}.")
+
+
 class Bot(crescent.Bot):
     def __init__(self) -> None:
         super().__init__(
@@ -36,25 +40,19 @@ class Bot(crescent.Bot):
             )
         else:
             if not CONFIG.sub_count_channel:
-                _LOG.warning(
-                    "Sub count channel id for mcoding server required to post"
-                    " stats."
+                _warn_missing_config(
+                    "sub_count_channel", "post sub count stats"
                 )
             if not CONFIG.view_count_channel:
-                _LOG.warning(
-                    "View count channel id for mcoding server required to post"
-                    " stats."
+                _warn_missing_config(
+                    "view_count_channel", "post view count stats"
                 )
             if not CONFIG.member_count_channel:
-                _LOG.warning(
-                    "Member count channel id for mcoding server required to"
-                    " post stats."
+                _warn_missing_config(
+                    "member_count_channel", "post member count stats"
                 )
             if not CONFIG.donor_role:
-                _LOG.warning(
-                    "Doner role id for mcoding server expected to update"
-                    " donor roles."
-                )
+                _warn_missing_config("donor_role", "update donor roles")
 
     @property
     def session(self) -> aiohttp.ClientSession:

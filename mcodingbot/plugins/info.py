@@ -33,7 +33,7 @@ async def links(ctx: Context) -> None:
 @plugin.include
 @crescent.command(name="stats", description="Exact values for mCoding statistics")
 async def stats(ctx: Context) -> None:
-    stats = await get_stats(ctx.session.bot)
+    stats = await stats.get_stats(ctx.session.bot)
     embed = hikari.Embed(
         title="mCoding stats",
         color=CONFIG.theme,

@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import crescent
 import hikari
 
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Context, Plugin
+from mcodingbot.plugins import stats
 
 plugin = Plugin()
 
@@ -26,3 +29,19 @@ async def links(ctx: Context) -> None:
         ),
     )
     await ctx.respond(embed=embed)
+
+@plugin.include
+@crescent.command(name="stats", description="Exact values for mCoding statistics")
+async def stats(ctx: Context) -> None:
+    stats = await get_stats(ctx.session.bot)
+    embed = hikari.Embed(
+        title="mCoding stats",
+        color=CONFIG.theme,
+        description=(
+            f"Server members: `{ctx.server.member_count:,}`\n"
+            f"Subscribers: `{stats.subs:,}`\n"
+            f"Views: {stats.views:,}"
+        ),
+    )
+    await ctx.respond(embed=embed)
+

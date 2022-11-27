@@ -47,13 +47,13 @@ async def update_channels(bot: Bot) -> None:
     else:
         LOGGER.warning("No sub count channel to update stats for.")
 
-    # upcate views count
+    # update views count
     if ch := get_channel(CONFIG.view_count_channel):
         await ch.edit(name=f"Views: {display_stats(stats.views)}")
     else:
         LOGGER.warning("No view count channel to update stats for.")
 
-    # upcate member count
+    # update member count
     if not (ch := get_channel(CONFIG.member_count_channel)):
         return LOGGER.warning("No member count channel to update stats for.")
 

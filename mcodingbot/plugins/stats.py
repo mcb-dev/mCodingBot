@@ -31,7 +31,7 @@ async def stats(ctx: Context) -> None:
         title="mCoding stats",
         color=CONFIG.theme,
         description=(
-            f"Server members: `{_last_known_stats.member_count}`\n"
+            f"Server members: `{_last_known_stats.member_count:,}`\n"
             f"Subscribers: `{_last_known_stats.subs:,}`\n"
             f"Views: `{_last_known_stats.views:,}`"
         ),

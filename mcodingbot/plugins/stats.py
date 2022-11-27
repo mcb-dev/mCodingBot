@@ -31,7 +31,7 @@ async def stats(ctx: Context) -> None:
         title="mCoding stats",
         color=CONFIG.theme,
         description=(
-            f"Server members: `{ctx.server.member_count:,}`\n"
+            f"Server members: `{_last_known_stats.member_count}`\n"
             f"Subscribers: `{_last_known_stats.subs:,}`\n"
             f"Views: `{_last_known_stats.views:,}`"
         ),
@@ -84,6 +84,8 @@ async def update_channels(bot: Bot) -> None:
     # never updated after the bot first starts.
     member_count = max(guild_approx_members, cached_members)
 
+    _last_known_stats.member_count = member_count
+
     await member_channel.edit(name=f"Members: {display_stats(member_count)}")
 
 
@@ -91,10 +93,11 @@ async def update_channels(bot: Bot) -> None:
 class Stats:
     subs: float
     views: float
+    member_count: int
 
 
 BASE_URL = "https://www.googleapis.com/youtube/v3/channels"
-_last_known_stats = Stats(0, 0)
+_last_known_stats = Stats(0, 0, 0)
 
 
 async def get_stats(bot: Bot) -> Stats:

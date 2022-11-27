@@ -1,17 +1,14 @@
-from __future__ import annotations
-
 import logging
-import crescent
-import hikari
-
 from dataclasses import dataclass
 from math import log2
 from typing import TYPE_CHECKING, Any
 
+import crescent
+import hikari
 from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import Plugin, Context
+from mcodingbot.utils import Context, Plugin
 
 if TYPE_CHECKING:
     from mcodingbot.bot import Bot
@@ -21,6 +18,23 @@ LOGGER = logging.getLogger(__file__)
 
 
 plugin = Plugin()
+
+
+@plugin.include
+@crescent.command(
+    name="stats", description="Exact values for mCoding statistics"
+)
+async def stats(ctx: Context) -> None:
+    embed = hikari.Embed(
+        title="mCoding stats",
+        color=CONFIG.theme,
+        description=(
+            f"Server members: `{ctx.server.member_count:,}`\n"
+            f"Subscribers: `{_last_known_stats.subs:,}`\n"
+            f"Views: {_last_known_stats.views:,}"
+        ),
+    )
+    await ctx.respond(embed=embed)
 
 
 @plugin.include
@@ -153,21 +167,3 @@ def display_stats(stat: int | float) -> str:
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"
 
     return f"2**{exp_stat} ({pretty_stat}{unit})"
-
-
-@plugin.include
-@crescent.command(
-    name="stats", description="Exact values for mCoding statistics"
-)
-async def stats(ctx: Context) -> None:
-    stats = await get_stats(ctx.bot)
-    embed = hikari.Embed(
-        title="mCoding stats",
-        color=CONFIG.theme,
-        description=(
-            f"Server members: `{ctx.server.member_count:,}`\n"
-            f"Subscribers: `{stats.subs:,}`\n"
-            f"Views: {stats.views:,}"
-        ),
-    )
-    await ctx.respond(embed=embed)

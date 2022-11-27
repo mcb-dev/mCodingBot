@@ -167,3 +167,4 @@ def display_stats(stat: int | float) -> str:
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"
 
     return f"2**{exp_stat} ({pretty_stat}{unit})"
+

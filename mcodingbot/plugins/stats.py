@@ -6,6 +6,7 @@ from math import log2
 from typing import TYPE_CHECKING, Any
 
 from crescent.ext import tasks
+from hikari import PermissibleGuildChannel
 
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Plugin
@@ -30,23 +31,30 @@ async def loop() -> None:
 
 
 async def update_channels(bot: Bot) -> None:
+    if not CONFIG.mcoding_server:
+        return
+
     stats = await get_stats(bot)
 
-    sub_channel = bot.cache.get_guild_channel(CONFIG.sub_count_channel)
-    view_channel = bot.cache.get_guild_channel(CONFIG.view_count_channel)
-    member_channel = bot.cache.get_guild_channel(CONFIG.member_count_channel)
+    def get_channel(channel_id: int | None) -> PermissibleGuildChannel | None:
+        if not channel_id:
+            return None
+        return bot.cache.get_guild_channel(channel_id)
 
-    if sub_channel:
-        await sub_channel.edit(name=f"Subs: {display_stats(stats.subs)}")
+    # update subs count
+    if ch := get_channel(CONFIG.sub_count_channel):
+        await ch.edit(name=f"Subs: {display_stats(stats.subs)}")
     else:
         LOGGER.warning("No sub count channel to update stats for.")
 
-    if view_channel:
-        await view_channel.edit(name=f"Views: {display_stats(stats.views)}")
+    # update views count
+    if ch := get_channel(CONFIG.view_count_channel):
+        await ch.edit(name=f"Views: {display_stats(stats.views)}")
     else:
         LOGGER.warning("No view count channel to update stats for.")
 
-    if not member_channel:
+    # update member count
+    if not (ch := get_channel(CONFIG.member_count_channel)):
         return LOGGER.warning("No member count channel to update stats for.")
 
     guild = bot.cache.get_guild(CONFIG.mcoding_server)
@@ -54,9 +62,11 @@ async def update_channels(bot: Bot) -> None:
         return LOGGER.warning(
             "Couldn't find mCoding guild, not updating member count."
         )
+
     guild_approx_members = guild.member_count
     if guild_approx_members is None:
         return LOGGER.warning("Cached guild has no aproximate member count.")
+
     cached_members = len(bot.cache.get_members_view_for_guild(guild.id))
 
     # at startup, cached_members will be very small because it relies on
@@ -65,7 +75,7 @@ async def update_channels(bot: Bot) -> None:
     # never updated after the bot first starts.
     member_count = max(guild_approx_members, cached_members)
 
-    await member_channel.edit(name=f"Members: {display_stats(member_count)}")
+    await ch.edit(name=f"Members: {display_stats(member_count)}")
 
 
 @dataclass

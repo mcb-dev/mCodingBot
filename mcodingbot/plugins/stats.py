@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from math import log2
 from typing import TYPE_CHECKING, Any
 
+from hikari import PermissibleGuildChannel
 from crescent.ext import tasks
 
 from mcodingbot.config import CONFIG
@@ -35,53 +36,45 @@ async def update_channels(bot: Bot) -> None:
 
     stats = await get_stats(bot)
 
-    if CONFIG.sub_count_channel:
-        sub_channel = bot.cache.get_guild_channel(CONFIG.sub_count_channel)
-    else:
-        sub_channel = None
+    def get_channel(channel_id: int | None) -> PermissibleGuildChannel | None:
+        if not channel_id:
+            return None
+        return bot.cache.get_guild_channel(channel_id)
 
-    if CONFIG.view_count_channel:
-        view_channel = bot.cache.get_guild_channel(CONFIG.view_count_channel)
-    else:
-        view_channel = None
-
-    if CONFIG.member_count_channel:
-        member_channel = bot.cache.get_guild_channel(
-            CONFIG.member_count_channel
-        )
-    else:
-        member_channel = None
-
-    if sub_channel:
-        await sub_channel.edit(name=f"Subs: {display_stats(stats.subs)}")
+    if ch := get_channel(CONFIG.sub_count_channel):
+        await ch.edit(name=f"Subs: {display_stats(stats.subs)}")
     else:
         LOGGER.warning("No sub count channel to update stats for.")
 
-    if view_channel:
-        await view_channel.edit(name=f"Views: {display_stats(stats.views)}")
+    if ch := get_channel(CONFIG.view_count_channel):
+        await ch.edit(name=f"Views: {display_stats(stats.views)}")
     else:
         LOGGER.warning("No view count channel to update stats for.")
 
-    if not member_channel:
-        return LOGGER.warning("No member count channel to update stats for.")
+    if ch := get_channel(CONFIG.member_count_channel):
+        guild = bot.cache.get_guild(CONFIG.mcoding_server)
+        if not guild:
+            return LOGGER.warning(
+                "Couldn't find mCoding guild, not updating member count."
+            )
 
-    guild = bot.cache.get_guild(CONFIG.mcoding_server)
-    if not guild:
-        return LOGGER.warning(
-            "Couldn't find mCoding guild, not updating member count."
-        )
-    guild_approx_members = guild.member_count
-    if guild_approx_members is None:
-        return LOGGER.warning("Cached guild has no aproximate member count.")
-    cached_members = len(bot.cache.get_members_view_for_guild(guild.id))
+        guild_approx_members = guild.member_count
+        if guild_approx_members is None:
+            return LOGGER.warning(
+                "Cached guild has no aproximate member count."
+            )
 
-    # at startup, cached_members will be very small because it relies on
-    # the guild being chuncked, which happens *after* startup. We can't
-    # just rely on the aproximate_member_count though, because that is
-    # never updated after the bot first starts.
-    member_count = max(guild_approx_members, cached_members)
+        cached_members = len(bot.cache.get_members_view_for_guild(guild.id))
 
-    await member_channel.edit(name=f"Members: {display_stats(member_count)}")
+        # at startup, cached_members will be very small because it relies on
+        # the guild being chuncked, which happens *after* startup. We can't
+        # just rely on the aproximate_member_count though, because that is
+        # never updated after the bot first starts.
+        member_count = max(guild_approx_members, cached_members)
+
+        await ch.edit(name=f"Members: {display_stats(member_count)}")
+    else:
+        LOGGER.warning("No member count channel to update stats for.")
 
 
 @dataclass

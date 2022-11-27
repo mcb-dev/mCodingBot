@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from math import log2
 from typing import TYPE_CHECKING, Any
 
-from hikari import PermissibleGuildChannel
 from crescent.ext import tasks
+from hikari import PermissibleGuildChannel
 
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Plugin

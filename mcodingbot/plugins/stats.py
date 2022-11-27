@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass
 from math import log2
@@ -31,7 +33,7 @@ async def stats(ctx: Context) -> None:
         description=(
             f"Server members: `{ctx.server.member_count:,}`\n"
             f"Subscribers: `{_last_known_stats.subs:,}`\n"
-            f"Views: {_last_known_stats.views:,}"
+            f"Views: `{_last_known_stats.views:,}`"
         ),
     )
     await ctx.respond(embed=embed)
@@ -167,4 +169,3 @@ def display_stats(stat: int | float) -> str:
     # gonna be such a problem if it's gonna be shown as e.g. "44.3K"
 
     return f"2**{exp_stat} ({pretty_stat}{unit})"
-

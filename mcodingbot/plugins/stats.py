@@ -41,40 +41,41 @@ async def update_channels(bot: Bot) -> None:
             return None
         return bot.cache.get_guild_channel(channel_id)
 
+    # update subs count
     if ch := get_channel(CONFIG.sub_count_channel):
         await ch.edit(name=f"Subs: {display_stats(stats.subs)}")
     else:
         LOGGER.warning("No sub count channel to update stats for.")
 
+    # upcate views count
     if ch := get_channel(CONFIG.view_count_channel):
         await ch.edit(name=f"Views: {display_stats(stats.views)}")
     else:
         LOGGER.warning("No view count channel to update stats for.")
 
-    if ch := get_channel(CONFIG.member_count_channel):
-        guild = bot.cache.get_guild(CONFIG.mcoding_server)
-        if not guild:
-            return LOGGER.warning(
-                "Couldn't find mCoding guild, not updating member count."
-            )
+    # upcate member count
+    if not (ch := get_channel(CONFIG.member_count_channel)):
+        return LOGGER.warning("No member count channel to update stats for.")
 
-        guild_approx_members = guild.member_count
-        if guild_approx_members is None:
-            return LOGGER.warning(
-                "Cached guild has no aproximate member count."
-            )
+    guild = bot.cache.get_guild(CONFIG.mcoding_server)
+    if not guild:
+        return LOGGER.warning(
+            "Couldn't find mCoding guild, not updating member count."
+        )
 
-        cached_members = len(bot.cache.get_members_view_for_guild(guild.id))
+    guild_approx_members = guild.member_count
+    if guild_approx_members is None:
+        return LOGGER.warning("Cached guild has no aproximate member count.")
 
-        # at startup, cached_members will be very small because it relies on
-        # the guild being chuncked, which happens *after* startup. We can't
-        # just rely on the aproximate_member_count though, because that is
-        # never updated after the bot first starts.
-        member_count = max(guild_approx_members, cached_members)
+    cached_members = len(bot.cache.get_members_view_for_guild(guild.id))
 
-        await ch.edit(name=f"Members: {display_stats(member_count)}")
-    else:
-        LOGGER.warning("No member count channel to update stats for.")
+    # at startup, cached_members will be very small because it relies on
+    # the guild being chuncked, which happens *after* startup. We can't
+    # just rely on the aproximate_member_count though, because that is
+    # never updated after the bot first starts.
+    member_count = max(guild_approx_members, cached_members)
+
+    await ch.edit(name=f"Members: {display_stats(member_count)}")
 
 
 @dataclass

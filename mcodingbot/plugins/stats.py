@@ -143,7 +143,9 @@ def display_stats(stat: int | float) -> str:
         pretty_stat = stat / 1_000_000
         unit = "M"
 
-    pretty_stat = strip_trailing_zeros(truncate_decimals(pretty_stat, 2))
+    pretty_stat = strip_trailing_zeros(
+        truncate_decimals(pretty_stat, 1 if unit == "K" else 2)
+    )
     exp_stat = strip_trailing_zeros(truncate_decimals(log2(stat), 2))
     # ^ this might not be as accurate as the member count thing when
     # someone picky actually calculates it, but I suppose it's not

@@ -17,12 +17,12 @@ class Config:
     discord_token: str = "DISCORD_TOKEN"
     theme: int = 0x0B7CD3
 
-    mcoding_server: int = -1
-    sub_count_channel: int = -1
-    view_count_channel: int = -1
-    member_count_channel: int = -1
-    patron_role: int = -1
-    donor_role: int = -1
+    mcoding_server: int | None = None
+    sub_count_channel: int | None = None
+    view_count_channel: int | None = None
+    member_count_channel: int | None = None
+    patron_role: int | None = None
+    donor_role: int | None = None
 
     # capacity, cooldown
     highlight_message_sent_cooldown: tuple[float, float] = (1, 60)

@@ -164,7 +164,8 @@ def truncate_decimals(number: int | float, ndigits: int = 0) -> float:
     return int(number * n) / n
 
 
-def display_stats(stat: int | float) -> str:
+def display_stats(stat: int) -> str:
+    pretty_stat: int | float
     if stat < 1_000:
         pretty_stat = stat
         unit = ""

@@ -101,8 +101,8 @@ async def update_channels(bot: Bot) -> None:
 
 @dataclass
 class Stats:
-    subs: float
-    views: float
+    subs: int
+    views: int
     member_count: int
 
 
@@ -139,8 +139,8 @@ async def get_stats(bot: Bot) -> Stats:
         LOGGER.error("mCoding channel did not contain 'statistics'.")
         return _last_known_stats
 
-    subs = float(statistics.get("subscriberCount", 0))
-    views = float(statistics.get("viewCount", 0))
+    subs = statistics.get("subscriberCount", 0)
+    views = statistics.get("viewCount", 0)
 
     if not (subs and views):
         LOGGER.error(

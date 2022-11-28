@@ -13,6 +13,10 @@ from mcodingbot.database.database import Database
 _LOG = logging.getLogger(__name__)
 
 
+def _warn_missing_config(variable: str, feature: str) -> None:
+    _LOG.warning(f"`{variable}` is required to {feature}.")
+
+
 class Bot(crescent.Bot):
     def __init__(self) -> None:
         super().__init__(
@@ -28,6 +32,27 @@ class Bot(crescent.Bot):
 
         self._session: aiohttp.ClientSession | None = None
         self._db: Database | None = None
+
+        if not CONFIG.mcoding_server:
+            _LOG.warning(
+                "Server stats and donor roles will not be updated because"
+                " `mcoding_server` is not provided. Is this intended?"
+            )
+        else:
+            if not CONFIG.sub_count_channel:
+                _warn_missing_config(
+                    "sub_count_channel", "post sub count stats"
+                )
+            if not CONFIG.view_count_channel:
+                _warn_missing_config(
+                    "view_count_channel", "post view count stats"
+                )
+            if not CONFIG.member_count_channel:
+                _warn_missing_config(
+                    "member_count_channel", "post member count stats"
+                )
+            if not CONFIG.donor_role:
+                _warn_missing_config("donor_role", "update donor roles")
 
     @property
     def session(self) -> aiohttp.ClientSession:

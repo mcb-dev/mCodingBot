@@ -101,8 +101,8 @@ async def update_channels(bot: Bot) -> None:
 
 @dataclass
 class Stats:
-    subs: float
-    views: float
+    subs: int
+    views: int
     member_count: int
 
 
@@ -139,8 +139,8 @@ async def get_stats(bot: Bot) -> Stats:
         LOGGER.error("mCoding channel did not contain 'statistics'.")
         return _last_known_stats
 
-    subs = float(statistics.get("subscriberCount", 0))
-    views = float(statistics.get("viewCount", 0))
+    subs = statistics.get("subscriberCount", 0)
+    views = statistics.get("viewCount", 0)
 
     if not (subs and views):
         LOGGER.error(
@@ -164,7 +164,8 @@ def truncate_decimals(number: int | float, ndigits: int = 0) -> float:
     return int(number * n) / n
 
 
-def display_stats(stat: int | float) -> str:
+def display_stats(stat: int) -> str:
+    pretty_stat: int | float
     if stat < 1_000:
         pretty_stat = stat
         unit = ""

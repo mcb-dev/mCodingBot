@@ -139,8 +139,8 @@ async def get_stats(bot: Bot) -> Stats:
         LOGGER.error("mCoding channel did not contain 'statistics'.")
         return _last_known_stats
 
-    subs = statistics.get("subscriberCount", 0)
-    views = statistics.get("viewCount", 0)
+    subs = int(statistics.get("subscriberCount", 0))
+    views = int(statistics.get("viewCount", 0))
 
     if not (subs and views):
         LOGGER.error(

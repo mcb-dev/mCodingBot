@@ -1,3 +1,0 @@
-[flake8]
-extend_ignore = E203
-exclude=.nox

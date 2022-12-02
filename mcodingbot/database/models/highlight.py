@@ -15,7 +15,7 @@ class Highlight(Model):
     highlight = types.VarChar(32).field()
     highlight_unique = Unique(highlight)
 
-    users: ManyToMany["User", "UserHighlight"] = ManyToMany(
+    users: ManyToMany[User, UserHighlight] = ManyToMany(
         "id",
         "user_highlights.highlight_id",
         "user_highlights.user_id",

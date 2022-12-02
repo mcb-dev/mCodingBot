@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class User(Model):
     user_id = types.Numeric().field().with_converter(NumericConverter)
     is_donor = types.Boolean().field(default=False)
-    highlights: ManyToMany["Highlight", "UserHighlight"] = ManyToMany(
+    highlights: ManyToMany[Highlight, UserHighlight] = ManyToMany(
         "user_id",
         "user_highlights.user_id",
         "user_highlights.highlight_id",

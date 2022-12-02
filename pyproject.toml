@@ -32,6 +32,9 @@ skip-magic-trailing-comma = true
 [tool.ruff]
 line-length = 79
 
+[tool.isort]
+profile = "black"
+
 [tool.mypy]
 warn_return_any = true
 warn_unused_configs = true
@@ -41,9 +44,6 @@ namespace_packages = true
 [[tool.mypy.overrides]]
 module = 'asyncpg'
 ignore_missing_imports = true
-
-[tool.isort]
-profile = "black"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

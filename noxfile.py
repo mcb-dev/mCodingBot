@@ -22,7 +22,7 @@ def apply_lint(session: nox.Session) -> None:
 @nox.session
 def lint(session: nox.Session) -> None:
     session.install("black")
-    session.install("flake8")
+    session.install("ruff")
     session.install("isort")
     session.run("black", ".", "--check")
     session.run("ruff", ".")

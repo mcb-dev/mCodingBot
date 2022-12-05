@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import inspect
 import json
-from datetime import timedelta
 from dataclasses import asdict, dataclass
+from datetime import timedelta
 from pathlib import Path
 from typing import Any, cast
 

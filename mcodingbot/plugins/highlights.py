@@ -201,7 +201,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
 
     for highlight, users in highlights_cache.items():
         if highlight in event.content:
-            retry_after = trigger_cooldown.trigger(
+            retry_after = trigger_cooldown.retry_after(
                 TriggerBucket(channel=event.channel_id, highlight=highlight)
             )
             if retry_after:

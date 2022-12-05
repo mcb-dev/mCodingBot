@@ -7,7 +7,7 @@ from typing import NamedTuple
 import crescent
 import hikari
 from asyncpg import UniqueViolationError
-from pycooldown import FixedCooldown
+from floodgate import FixedMapping
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
@@ -30,10 +30,10 @@ class TriggerBucket(NamedTuple):
 plugin = Plugin()
 highlights_group = crescent.Group("highlights")
 highlights_cache: dict[str, list[hikari.Snowflake]] = defaultdict(list)
-sent_message_cooldown: FixedCooldown[SentMessageBucket] = FixedCooldown(
+sent_message_cooldown: FixedMapping[SentMessageBucket] = FixedMapping(
     *CONFIG.highlight_message_sent_cooldown
 )
-trigger_cooldown: FixedCooldown[TriggerBucket] = FixedCooldown(
+trigger_cooldown: FixedMapping[TriggerBucket] = FixedMapping(
     *CONFIG.highlight_trigger_cooldown
 )
 
@@ -188,15 +188,9 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     if event.is_bot:
         return
 
-    bucket = sent_message_cooldown.get_bucket(
+    sent_message_cooldown.reset(
         SentMessageBucket(user=event.author_id, channel=event.channel_id)
     )
-    # we need to reset the bucket, because calling update_ratelimit
-    # only updates the limit if retry_after is none. Adding a `force`
-    # kwarg is probably something that should be PRed for pycooldown.
-    bucket.reset()
-    retry_after = bucket.update_ratelimit()
-    assert retry_after is None, "bucket failed to reset"
 
     if not event.content:
         return
@@ -205,7 +199,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
 
     for highlight, users in highlights_cache.items():
         if highlight in event.content:
-            retry_after = trigger_cooldown.update_ratelimit(
+            retry_after = trigger_cooldown.trigger(
                 TriggerBucket(channel=event.channel_id, highlight=highlight)
             )
             if retry_after:
@@ -219,7 +213,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
                 highlights[user_id].append(highlight)
 
     for user_id, hls in highlights.items():
-        if sent_message_cooldown.get_retry_after(
+        if sent_message_cooldown.trigger(
             SentMessageBucket(user=user_id, channel=event.channel_id)
         ):
             # the user has sent messages in this channel, so highlights are

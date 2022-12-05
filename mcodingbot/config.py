@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import json
+from datetime import timedelta
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -25,8 +26,14 @@ class Config:
     donor_role: int | None = None
 
     # capacity, cooldown
-    highlight_message_sent_cooldown: tuple[float, float] = (1, 60)
-    highlight_trigger_cooldown: tuple[float, float] = (1, 30)
+    highlight_message_sent_cooldown: tuple[float, timedelta] = (
+        1,
+        timedelta(minutes=1),
+    )
+    highlight_trigger_cooldown: tuple[float, timedelta] = (
+        1,
+        timedelta(seconds=30),
+    )
 
     mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
     yt_api_key: str = "YOUTUBE_API_KEY"

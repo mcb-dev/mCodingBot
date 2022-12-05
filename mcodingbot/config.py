@@ -26,11 +26,11 @@ class Config:
     donor_role: int | None = None
 
     # capacity, cooldown
-    highlight_message_sent_cooldown: tuple[float, timedelta] = (
+    highlight_message_sent_cooldown: tuple[int, timedelta] = (
         1,
         timedelta(minutes=1),
     )
-    highlight_trigger_cooldown: tuple[float, timedelta] = (
+    highlight_trigger_cooldown: tuple[int, timedelta] = (
         1,
         timedelta(seconds=30),
     )

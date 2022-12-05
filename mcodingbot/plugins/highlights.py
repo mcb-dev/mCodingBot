@@ -188,9 +188,11 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     if event.is_bot:
         return
 
-    sent_message_cooldown.trigger(
-        SentMessageBucket(user=event.author_id, channel=event.channel_id)
+    message_bucket = SentMessageBucket(
+        user=event.author_id, channel=event.channel_id
     )
+    sent_message_cooldown.reset(message_bucket)
+    sent_message_cooldown.trigger(message_bucket)
 
     if not event.content:
         return

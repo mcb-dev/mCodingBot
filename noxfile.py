@@ -4,7 +4,7 @@ import nox
 @nox.session
 def mypy(session: nox.Session) -> None:
     session.install("poetry")
-    session.run("poetry", "install", "--with", "typing")
+    session.run("poetry", "install")
     session.run("mypy", ".")
 
 

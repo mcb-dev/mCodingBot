@@ -10,7 +10,7 @@ bot = "mcodingbot.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"
-hikari = "^2.0.0.dev112"
+hikari = "^2.0.0.dev113"
 hikari-crescent = "^0.4.0"
 apgorm = "^1.0.0b12"
 rapidfuzz = "^2.10.0"

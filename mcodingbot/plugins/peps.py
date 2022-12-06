@@ -35,8 +35,10 @@ def decode_dismiss_button_id(dismiss_button_id: str) -> hikari.Snowflake:
     return hikari.Snowflake(dismiss_button_id.split(":")[1])
 
 
-def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.ActionRowBuilder:
-    action_row = plugin.app.rest.build_action_row()
+def get_dismiss_button(
+    id: hikari.Snowflake,
+) -> hikari.api.MessageActionRowBuilder:
+    action_row = plugin.app.rest.build_message_action_row()
     action_row.add_button(
         hikari.ButtonStyle.SECONDARY, encode_dismiss_button_id(id)
     ).set_label("Dismiss").add_to_container()

@@ -15,15 +15,19 @@ hikari-crescent = "^0.4.0"
 apgorm = "^1.0.0b12"
 rapidfuzz = "^2.10.0"
 cachetools = "^5.2.0"
-types-cachetools = "^5.2.1"
-pycooldown = "^0.1.0b9"
+floodgate-rs = "^0.1.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 nox = ">=2022.8.7"
+
+[tool.poetry.group.linting.dependencies]
 black = "^22.8.0"
 ruff = "^0.0.151"
 isort = "^5.10.1"
+
+[tool.poetry.group.typing.dependencies]
 mypy = "^0.991"
+types-cachetools = "^5.2.1"
 
 [tool.black]
 line-length = 79

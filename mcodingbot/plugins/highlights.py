@@ -201,7 +201,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
 
     for highlight, users in highlights_cache.items():
         if highlight in event.content:
-            retry_after = trigger_cooldown.retry_after(
+            retry_after = trigger_cooldown.trigger(
                 TriggerBucket(channel=event.channel_id, highlight=highlight)
             )
             if retry_after:
@@ -215,7 +215,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
                 highlights[user_id].append(highlight)
 
     for user_id, hls in highlights.items():
-        if sent_message_cooldown.trigger(
+        if not sent_message_cooldown.can_trigger(
             SentMessageBucket(user=user_id, channel=event.channel_id)
         ):
             # the user has sent messages in this channel, so highlights are

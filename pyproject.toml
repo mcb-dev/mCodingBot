@@ -21,7 +21,7 @@ pycooldown = "^0.1.0b9"
 [tool.poetry.dev-dependencies]
 nox = ">=2022.8.7"
 black = "^22.8.0"
-ruff = "^0.0.151"
+ruff = "^0.0.166"
 isort = "^5.10.1"
 mypy = "^0.991"
 

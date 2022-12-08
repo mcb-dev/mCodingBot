@@ -3,14 +3,27 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from datetime import datetime, timedelta, timezone
+from typing import Iterable, NamedTuple, TypeGuard
 
 import crescent
 import hikari
 from cachetools import TTLCache
 from crescent.ext import tasks
+from floodgate import FixedMapping
 
 from mcodingbot.config import CONFIG
-from mcodingbot.utils import Context, PEPManager, Plugin
+from mcodingbot.utils import Context, PEPInfo, PEPManager, Plugin
+
+
+class PepBucket(NamedTuple):
+    pep: int
+    channel: int
+
+
+class MessageInfo(NamedTuple):
+    message: int
+    peps: list[PEPInfo]
+
 
 PEP_REGEX = re.compile(
     r"(?<!https:\/\/peps\.python\.org\/)pep[\s-]*(?P<pep>\d{1,4}\b)",
@@ -20,11 +33,36 @@ DISMISS_BUTTON_ID = "dismiss"
 MAX_AGE_FOR_SEND = timedelta(minutes=1)
 MAX_AGE_FOR_EDIT = timedelta(minutes=5)
 
-recent_pep_responses: TTLCache[int, int] = TTLCache(
+recent_pep_responses: TTLCache[int, MessageInfo] = TTLCache(
     maxsize=100, ttl=MAX_AGE_FOR_EDIT.total_seconds()
 )
 plugin = Plugin()
 pep_manager = PEPManager()
+pep_cooldown: FixedMapping[PepBucket] = FixedMapping(*CONFIG.pep_cooldown)
+
+
+def trigger_cooldowns(peps: Iterable[PEPInfo], channel_id: int) -> None:
+    for pep in peps:
+        pep_cooldown.trigger(PepBucket(pep=pep.number, channel=channel_id))
+
+
+def reset_cooldowns(peps: Iterable[PEPInfo], channel_id: int) -> None:
+    for pep in peps:
+        pep_cooldown.reset(PepBucket(pep=pep.number, channel=channel_id))
+
+
+def filter_can_send(peps: list[PEPInfo], channel_id: int) -> Iterable[PEPInfo]:
+    """
+    Removes peps that can not be sent because of the cooldown from the list
+    of peps.
+    """
+
+    def is_sendable(pep: PEPInfo) -> bool:
+        return pep_cooldown.can_trigger(
+            PepBucket(pep=pep.number, channel=channel_id)
+        )
+
+    return filter(is_sendable, peps)
 
 
 def encode_dismiss_button_id(id: hikari.Snowflake) -> str:
@@ -89,19 +127,36 @@ def within_age_cutoff(message_created_at: datetime) -> bool:
     return datetime.now(timezone.utc) - message_created_at <= MAX_AGE_FOR_SEND
 
 
-def get_peps_embed(content: str) -> hikari.Embed | None:
-    pep_refs = [
-        int(ref.group("pep")) for ref in re.finditer(PEP_REGEX, content)
-    ]
-    peps = map(pep_manager.get, sorted(set(pep_refs))[:5])
-    pep_links_message = "\n".join(str(pep) for pep in peps if pep)
+def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> list[PEPInfo]:
+    """
+    Return a sorted list of all the peps mentioned in a string.
+    """
+    if not content:
+        return []
 
-    if not pep_links_message:
-        return None
+    peps = sorted(
+        [int(ref.group("pep")) for ref in re.finditer(PEP_REGEX, content)]
+    )
+
+    def is_pep(pep: PEPInfo | None) -> TypeGuard[PEPInfo]:
+        return bool(pep)
+
+    return list(filter(is_pep, map(pep_manager.get, peps)))
+
+
+def get_peps_embed(refs: list[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:
+    """
+    Get a pep embed from a list of refs. If there are no refs,
+    return `hikari.UNDEFINED`.
+    """
+    if not refs:
+        return hikari.UNDEFINED
+
+    pep_links_message = "\n".join(str(pep) for pep in refs if pep)
 
     embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
 
-    if (pep_count := len(pep_refs)) > 5:
+    if (pep_count := len(refs)) > 5:
         embed.set_footer(f"{pep_count - 5} PEPs omitted")
 
     return embed
@@ -110,60 +165,98 @@ def get_peps_embed(content: str) -> hikari.Embed | None:
 @plugin.include
 @crescent.event
 async def on_message(event: hikari.MessageCreateEvent) -> None:
+    """
+    Send a message with an embed containing the peps mentioned in a message
+    that have not been mentioned recently.
+    """
     if not event.message.content or event.author.is_bot:
         return
-    if embed := get_peps_embed(event.message.content):
+
+    if peps := get_pep_refs(event.message.content):
+        can_send = list(filter_can_send(peps, event.channel_id))
+
+        if not can_send:
+            return
+
+        trigger_cooldowns(peps, event.channel_id)
+
+        embed = get_peps_embed(can_send)
         response = await event.message.respond(
             embed=embed,
             component=get_dismiss_button(event.author.id),
             reply=True,
         )
-        recent_pep_responses[event.message.id] = response.id
+        recent_pep_responses[event.message.id] = MessageInfo(response.id, peps)
 
 
 @plugin.include
 @crescent.event
 async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
+    """
+    Edit a message to reflect the new peps in the content. Any message that
+    younger than `MAX_AGE_FOR_EDIT.total_seconds()` will be edited.
+
+    Pep messages can immediately show up if the pep number was edited out of
+    the parent message.
+    """
     if not event.author or event.author.is_bot:
         return
 
-    embed = (
-        get_peps_embed(event.message.content)
-        if event.message.content
-        else None
-    )
+    peps = get_pep_refs(event.message.content)
+    embed = get_peps_embed(peps)
+
     if original := recent_pep_responses.get(event.message.id):
+        reset_cooldowns(original.peps, event.channel_id)
+
+        trigger_cooldowns(peps, event.channel_id)
+
         with suppress(hikari.NotFoundError):
             if embed:
                 await plugin.app.rest.edit_message(
-                    event.channel_id, original, embed=embed
+                    event.channel_id, original.message, embed=embed
                 )
             else:
                 await plugin.app.rest.delete_message(
-                    event.channel_id, original
+                    event.channel_id, original.message
                 )
                 del recent_pep_responses[event.message.id]
     elif embed and within_age_cutoff(event.message.created_at):
+        trigger_cooldowns(peps, event.channel_id)
         response = await event.message.respond(
             embed=embed,
             component=get_dismiss_button(event.author.id),
             reply=True,
         )
-        recent_pep_responses[event.message.id] = response.id
+        recent_pep_responses[event.message.id] = MessageInfo(
+            response.id, get_pep_refs(event.message.content)
+        )
 
 
 @plugin.include
 @crescent.event
 async def on_message_delete(event: hikari.GuildMessageDeleteEvent) -> None:
+    """
+    Pep messages can immediately show up if the parent message was deleted.
+    """
     if original := recent_pep_responses.get(event.message_id):
+        reset_cooldowns(original.peps, event.channel_id)
+
         with suppress(hikari.NotFoundError):
-            await plugin.app.rest.delete_message(event.channel_id, original)
+            await plugin.app.rest.delete_message(
+                event.channel_id, original.message
+            )
             del recent_pep_responses[event.message_id]
 
 
 @plugin.include
 @crescent.event
 async def on_interaction(event: hikari.InteractionCreateEvent) -> None:
+    """
+    When a pep message is dismissed, it will not show up again until the
+    cooldown is over.
+    NOTE: If the parent message is deleted, the pep message can appear
+    immediately. I think changing this behavior would be too complex.
+    """
     inter = event.interaction
 
     if not (

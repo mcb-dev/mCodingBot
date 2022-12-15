@@ -136,7 +136,7 @@ def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> list[PEPInfo]:
 
     peps = sorted(int(ref.group("pep")) for ref in PEP_REGEX.finditer(content))
 
-    return [pep for pep in map(pep_manager.get, peps) if pep]
+    return list(filter(None, map(pep_manager.get, peps)))
 
 
 def get_peps_embed(refs: list[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:

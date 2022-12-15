@@ -15,7 +15,7 @@ from mcodingbot.config import CONFIG
 from mcodingbot.utils import Context, PEPInfo, PEPManager, Plugin
 
 
-class PepBucket(NamedTuple):
+class PEPBucket(NamedTuple):
     pep: int
     channel: int
 
@@ -38,17 +38,17 @@ recent_pep_responses: TTLCache[int, MessageInfo] = TTLCache(
 )
 plugin = Plugin()
 pep_manager = PEPManager()
-pep_cooldown: FixedMapping[PepBucket] = FixedMapping(*CONFIG.pep_cooldown)
+pep_cooldown: FixedMapping[PEPBucket] = FixedMapping(*CONFIG.pep_cooldown)
 
 
 def trigger_cooldowns(peps: Iterable[PEPInfo], channel_id: int) -> None:
     for pep in peps:
-        pep_cooldown.trigger(PepBucket(pep=pep.number, channel=channel_id))
+        pep_cooldown.trigger(PEPBucket(pep=pep.number, channel=channel_id))
 
 
 def reset_cooldowns(peps: Iterable[PEPInfo], channel_id: int) -> None:
     for pep in peps:
-        pep_cooldown.reset(PepBucket(pep=pep.number, channel=channel_id))
+        pep_cooldown.reset(PEPBucket(pep=pep.number, channel=channel_id))
 
 
 def filter_can_send(peps: list[PEPInfo], channel_id: int) -> Iterable[PEPInfo]:
@@ -59,7 +59,7 @@ def filter_can_send(peps: list[PEPInfo], channel_id: int) -> Iterable[PEPInfo]:
 
     def is_sendable(pep: PEPInfo) -> bool:
         return pep_cooldown.can_trigger(
-            PepBucket(pep=pep.number, channel=channel_id)
+            PEPBucket(pep=pep.number, channel=channel_id)
         )
 
     return filter(is_sendable, peps)
@@ -147,7 +147,7 @@ def get_peps_embed(refs: list[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:
     if not refs:
         return hikari.UNDEFINED
 
-    pep_links_message = "\n".join(map(str, pep))
+    pep_links_message = "\n".join(map(str, refs))
 
     embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
 

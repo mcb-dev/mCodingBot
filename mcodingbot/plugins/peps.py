@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, NamedTuple, TYPE_CHECKING
+from typing import Iterable, NamedTuple
 
 import crescent
 import hikari
@@ -13,9 +13,6 @@ from floodgate import FixedMapping
 
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Context, PEPInfo, PEPManager, Plugin
-
-if TYPE_CHECKING:
-    from typing import TypeGuard
 
 
 class PepBucket(NamedTuple):
@@ -141,10 +138,7 @@ def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> list[PEPInfo]:
         [int(ref.group("pep")) for ref in re.finditer(PEP_REGEX, content)]
     )
 
-    def is_pep(pep: PEPInfo | None) -> TypeGuard[PEPInfo]:
-        return bool(pep)
-
-    return list(filter(is_pep, map(pep_manager.get, peps)))
+    return [pep for pep in map(pep_manager.get, peps) if pep]
 
 
 def get_peps_embed(refs: list[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:
@@ -155,7 +149,7 @@ def get_peps_embed(refs: list[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:
     if not refs:
         return hikari.UNDEFINED
 
-    pep_links_message = "\n".join(str(pep) for pep in refs if pep)
+    pep_links_message = "\n".join(str(pep) for pep in refs)
 
     embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
 

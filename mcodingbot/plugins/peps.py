@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, NamedTuple, TypeGuard
+from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 import crescent
 import hikari
@@ -13,6 +13,9 @@ from floodgate import FixedMapping
 
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Context, PEPInfo, PEPManager, Plugin
+
+if TYPE_CHECKING:
+    from typing import TypeGuard
 
 
 class PepBucket(NamedTuple):

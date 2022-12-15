@@ -182,9 +182,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
             component=get_dismiss_button(event.author.id),
             reply=True,
         )
-        recent_pep_responses[event.message.id] = MessageInfo(
-            response.id, set(peps)
-        )
+        recent_pep_responses[event.message.id] = MessageInfo(response.id, peps)
 
 
 @plugin.include

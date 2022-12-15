@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, NamedTuple
+from typing import Iterable, NamedTuple, Collection
 
 import crescent
 import hikari
@@ -22,7 +22,7 @@ class PEPBucket(NamedTuple):
 
 class MessageInfo(NamedTuple):
     message: int
-    peps: list[PEPInfo]
+    peps: set[PEPInfo]
 
 
 PEP_REGEX = re.compile(
@@ -34,7 +34,7 @@ MAX_AGE_FOR_SEND = timedelta(minutes=1)
 MAX_AGE_FOR_EDIT = timedelta(minutes=5)
 
 recent_pep_responses: TTLCache[int, MessageInfo] = TTLCache(
-    maxsize=100, ttl=MAX_AGE_FOR_EDIT.total_seconds()
+    maxsize=10_000, ttl=MAX_AGE_FOR_EDIT.total_seconds()
 )
 plugin = Plugin()
 pep_manager = PEPManager()
@@ -51,7 +51,9 @@ def reset_cooldowns(peps: Iterable[PEPInfo], channel_id: int) -> None:
         pep_cooldown.reset(PEPBucket(pep=pep.number, channel=channel_id))
 
 
-def filter_can_send(peps: list[PEPInfo], channel_id: int) -> Iterable[PEPInfo]:
+def filter_can_send(
+    peps: Iterable[PEPInfo], channel_id: int
+) -> Iterable[PEPInfo]:
     """
     Removes peps that can not be sent because of the cooldown from the list
     of peps.
@@ -127,7 +129,7 @@ def within_age_cutoff(message_created_at: datetime) -> bool:
     return datetime.now(timezone.utc) - message_created_at <= MAX_AGE_FOR_SEND
 
 
-def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> list[PEPInfo]:
+def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> Iterable[PEPInfo]:
     """
     Return a sorted list of all the peps mentioned in a string.
     """
@@ -136,10 +138,12 @@ def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> list[PEPInfo]:
 
     peps = sorted(int(ref.group("pep")) for ref in PEP_REGEX.finditer(content))
 
-    return list(filter(None, map(pep_manager.get, peps)))
+    return filter(None, map(pep_manager.get, peps))
 
 
-def get_peps_embed(refs: list[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:
+def get_peps_embed(
+    refs: Collection[PEPInfo],
+) -> hikari.UndefinedOr[hikari.Embed]:
     """
     Get a pep embed from a list of refs. If there are no refs,
     return `hikari.UNDEFINED`.
@@ -167,15 +171,12 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
     if not event.message.content or event.author.is_bot:
         return
 
-    if peps := get_pep_refs(event.message.content):
-        can_send = list(filter_can_send(peps, event.channel_id))
-
-        if not can_send:
-            return
-
+    if peps := set(
+        filter_can_send(get_pep_refs(event.message.content), event.channel_id)
+    ):
         trigger_cooldowns(peps, event.channel_id)
 
-        embed = get_peps_embed(can_send)
+        embed = get_peps_embed(peps)
         response = await event.message.respond(
             embed=embed,
             component=get_dismiss_button(event.author.id),
@@ -197,34 +198,45 @@ async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
     if not event.author or event.author.is_bot:
         return
 
-    peps = get_pep_refs(event.message.content)
-    embed = get_peps_embed(peps)
+    peps = set(get_pep_refs(event.message.content))
 
     if original := recent_pep_responses.get(event.message.id):
-        reset_cooldowns(original.peps, event.channel_id)
+        # reset the cooldown for any peps that were removed
+        reset_cooldowns(original.peps - peps, event.channel_id)
 
-        trigger_cooldowns(peps, event.channel_id)
+        # reset the cooldown for any peps that are kept
+        reset_cooldowns(original.peps & peps, event.channel_id)
+
+        final = set(filter_can_send(peps, event.channel_id))
+        trigger_cooldowns(final, event.channel_id)
+
+        embed = get_peps_embed(final)
 
         with suppress(hikari.NotFoundError):
             if embed:
                 await plugin.app.rest.edit_message(
                     event.channel_id, original.message, embed=embed
                 )
+                recent_pep_responses[event.message.id] = MessageInfo(
+                    original.message, final
+                )
             else:
                 await plugin.app.rest.delete_message(
                     event.channel_id, original.message
                 )
                 del recent_pep_responses[event.message.id]
-    elif embed and within_age_cutoff(event.message.created_at):
+    elif (
+        peps := set(filter_can_send(peps, event.channel_id))
+    ) and within_age_cutoff(event.message.created_at):
+        embed = get_peps_embed(peps)
+        assert embed
         trigger_cooldowns(peps, event.channel_id)
         response = await event.message.respond(
             embed=embed,
             component=get_dismiss_button(event.author.id),
             reply=True,
         )
-        recent_pep_responses[event.message.id] = MessageInfo(
-            response.id, get_pep_refs(event.message.content)
-        )
+        recent_pep_responses[event.message.id] = MessageInfo(response.id, peps)
 
 
 @plugin.include

@@ -149,7 +149,7 @@ def get_peps_embed(refs: list[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:
     if not refs:
         return hikari.UNDEFINED
 
-    pep_links_message = "\n".join(str(pep) for pep in refs)
+    pep_links_message = "\n".join(map(str, pep))
 
     embed = hikari.Embed(description=pep_links_message, color=CONFIG.theme)
 

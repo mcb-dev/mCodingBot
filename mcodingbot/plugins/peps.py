@@ -134,9 +134,7 @@ def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> list[PEPInfo]:
     if not content:
         return []
 
-    peps = sorted(
-        [int(ref.group("pep")) for ref in re.finditer(PEP_REGEX, content)]
-    )
+    peps = sorted(int(ref.group("pep")) for ref in PEP_REGEX.finditer(content))
 
     return [pep for pep in map(pep_manager.get, peps) if pep]
 

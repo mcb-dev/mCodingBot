@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, NamedTuple, Collection
+from typing import Collection, Iterable, NamedTuple
 
 import crescent
 import hikari

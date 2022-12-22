@@ -122,3 +122,6 @@ class PEPInfo:
 
     def __str__(self) -> str:
         return f"PEP {self.number}: [{self.title}]({self.link})"
+
+    def __hash__(self) -> int:
+        return self.number

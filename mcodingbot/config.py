@@ -34,6 +34,7 @@ class Config:
         1,
         timedelta(seconds=30),
     )
+    pep_cooldown: tuple[int, timedelta] = (1, timedelta(minutes=5))
 
     mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
     yt_api_key: str = "YOUTUBE_API_KEY"

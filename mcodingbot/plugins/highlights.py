@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from collections import defaultdict
-from typing import TYPE_CHECKING, NamedTuple, cast
+from typing import NamedTuple
 
 import crescent
 import hikari
@@ -14,28 +14,23 @@ from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
 from mcodingbot.utils import Context, Plugin
 
-if TYPE_CHECKING:
-    from mcodingbot.bot import Bot
-
 MAX_HIGHLIGHTS = 25
 MAX_HIGHLIGHT_LENGTH = 32
 
 
-async def has_permission(
-    bot: Bot, guild_id: int, user_id: int, channel_id: int
-) -> bool:
-    member = bot.cache.get_member(guild_id, user_id)
+async def has_permission(guild_id: int, user_id: int, channel_id: int) -> bool:
+    member = plugin.app.cache.get_member(guild_id, user_id)
     if not member:
         return False
 
-    channel = bot.cache.get_guild_channel(channel_id)
+    channel = plugin.app.cache.get_guild_channel(channel_id)
     if not channel:
         # must be a thread
-        thread = bot.rest.fetch_channel(channel_id)
+        thread = plugin.app.rest.fetch_channel(channel_id)
         assert isinstance(
             thread, (hikari.GuildThreadChannel, hikari.GuildNewsThread)
         )
-        return await has_permission(bot, guild_id, user_id, thread.parent_id)
+        return await has_permission(guild_id, user_id, thread.parent_id)
 
     permissions = calculate_permissions(member, channel)
     return hikari.Permissions.VIEW_CHANNEL in permissions
@@ -188,17 +183,11 @@ async def on_start(_: hikari.StartingEvent) -> None:
 
 
 async def _dm_user_highlight(
-    bot: Bot,
-    triggering_message: hikari.Message,
-    triggers: list[str],
-    user_id: int,
+    triggering_message: hikari.Message, triggers: list[str], user_id: int
 ) -> None:
     assert triggering_message.guild_id is not None
     if not await has_permission(
-        bot,
-        triggering_message.guild_id,
-        user_id,
-        triggering_message.channel_id,
+        triggering_message.guild_id, user_id, triggering_message.channel_id
     ):
         return
 
@@ -223,8 +212,6 @@ async def _dm_user_highlight(
 async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     if event.is_bot:
         return
-
-    bot = cast("Bot", event.app)
 
     message_bucket = SentMessageBucket(
         user=event.author_id, channel=event.channel_id
@@ -261,9 +248,6 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
             continue
         asyncio.ensure_future(
             _dm_user_highlight(
-                bot,
-                triggering_message=event.message,
-                triggers=hls,
-                user_id=user_id,
+                triggering_message=event.message, triggers=hls, user_id=user_id
             )
         )

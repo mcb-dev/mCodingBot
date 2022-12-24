@@ -17,6 +17,7 @@ rapidfuzz = "^2.10.0"
 cachetools = "^5.2.0"
 types-cachetools = "^5.2.1"
 floodgate-rs = "^0.1.1"
+hikari-toolbox = "^0.1.4"
 
 [tool.poetry.dev-dependencies]
 nox = ">=2022.8.7"

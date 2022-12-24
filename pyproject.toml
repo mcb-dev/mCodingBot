@@ -26,11 +26,7 @@ isort = "^5.10.1"
 mypy = "^0.991"
 
 [tool.black]
-line-length = 88
 skip-magic-trailing-comma = true
-
-[tool.ruff]
-line-length = 88
 
 [tool.isort]
 profile = "black"

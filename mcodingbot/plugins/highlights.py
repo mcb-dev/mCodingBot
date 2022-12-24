@@ -6,9 +6,9 @@ from typing import NamedTuple
 
 import crescent
 import hikari
+import toolbox
 from asyncpg import UniqueViolationError
 from floodgate import FixedMapping
-from toolbox.members import calculate_permissions
 
 from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
@@ -32,7 +32,7 @@ async def has_permission(guild_id: int, user_id: int, channel_id: int) -> bool:
         )
         return await has_permission(guild_id, user_id, thread.parent_id)
 
-    permissions = calculate_permissions(member, channel)
+    permissions = toolbox.calculate_permissions(member, channel)
     return hikari.Permissions.VIEW_CHANNEL in permissions
 
 

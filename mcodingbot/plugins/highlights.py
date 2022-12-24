@@ -27,9 +27,7 @@ async def has_permission(guild_id: int, user_id: int, channel_id: int) -> bool:
     if not channel:
         # must be a thread
         thread = plugin.app.rest.fetch_channel(channel_id)
-        assert isinstance(
-            thread, (hikari.GuildThreadChannel, hikari.GuildNewsThread)
-        )
+        assert isinstance(thread, hikari.GuildThreadChannel)
         return await has_permission(guild_id, user_id, thread.parent_id)
 
     permissions = toolbox.calculate_permissions(member, channel)

@@ -39,7 +39,7 @@ class Config:
     mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
     yt_api_key: str = "YOUTUBE_API_KEY"
 
-    mcoding_site: str = "https://mcoding.io"
+    mcoding_website: str = "https://mcoding.io"
     mcoding_youtube: str = "https://www.youtube.com/@mCoding"
     mcoding_repo: str = "https://github.com/mCodingLLC/VideosSampleCode"
     mcodingbot_repo: str = "https://github.com/mcb-dev/mCodingBot"

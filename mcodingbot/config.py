@@ -26,22 +26,14 @@ class Config:
     donor_role: int | None = None
 
     # capacity, cooldown
-    highlight_message_sent_cooldown: tuple[int, timedelta] = (
-        1,
-        timedelta(minutes=1),
-    )
-    highlight_trigger_cooldown: tuple[int, timedelta] = (
-        1,
-        timedelta(seconds=30),
-    )
+    highlight_message_sent_cooldown: tuple[int, timedelta] = (1, timedelta(minutes=1))
+    highlight_trigger_cooldown: tuple[int, timedelta] = (1, timedelta(seconds=30))
     pep_cooldown: tuple[int, timedelta] = (1, timedelta(minutes=5))
 
     mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
     yt_api_key: str = "YOUTUBE_API_KEY"
 
-    mcoding_youtube: str = (
-        "https://www.youtube.com/channel/UCaiL2GDNpLYH6Wokkk1VNcg"
-    )
+    mcoding_youtube: str = "https://www.youtube.com/channel/UCaiL2GDNpLYH6Wokkk1VNcg"
     mcoding_repo: str = "https://github.com/mCodingLLC/VideosSampleCode"
     mcodingbot_repo: str = "https://github.com/mcb-dev/mCodingBot"
 
@@ -72,9 +64,7 @@ class Config:
                 c = cls(
                     **{
                         k: v
-                        for k, v in cast(
-                            "dict[Any, Any]", json.load(f)
-                        ).items()
+                        for k, v in cast("dict[Any, Any]", json.load(f)).items()
                         if k in keys
                     }
                 )

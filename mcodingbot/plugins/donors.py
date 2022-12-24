@@ -24,9 +24,7 @@ plugin = Plugin()
     dm_enabled=False,
 )
 class SetDonorStatus:
-    member = crescent.option(
-        hikari.User, "The member to set the donor status for."
-    )
+    member = crescent.option(hikari.User, "The member to set the donor status for.")
     is_donor = crescent.option(
         bool, "Whether or not this user is a donor.", name="is-donor"
     )
@@ -59,9 +57,7 @@ async def add_donor_role() -> None:
     for member in plugin.app.cache.get_members_view_for_guild(
         CONFIG.mcoding_server
     ).values():
-        role_add_tasks.append(
-            asyncio.create_task(_give_donor_role_if_donor(member))
-        )
+        role_add_tasks.append(asyncio.create_task(_give_donor_role_if_donor(member)))
 
     await asyncio.gather(*role_add_tasks)
 
@@ -72,10 +68,7 @@ async def _give_donor_role_if_donor(member: hikari.Member) -> None:
 
 
 async def _is_donor(member: hikari.Member) -> bool:
-    if (
-        CONFIG.patron_role in member.role_ids
-        or CONFIG.donor_role in member.role_ids
-    ):
+    if CONFIG.patron_role in member.role_ids or CONFIG.donor_role in member.role_ids:
         return True
 
     if CONFIG.no_db_mode:
@@ -85,9 +78,7 @@ async def _is_donor(member: hikari.Member) -> bool:
     return user.is_donor if user else False
 
 
-async def _update_donor_role(
-    member: int | hikari.Member, is_donor: bool
-) -> None:
+async def _update_donor_role(member: int | hikari.Member, is_donor: bool) -> None:
     if not (CONFIG.mcoding_server and CONFIG.donor_role):
         return
     user_id = int(member)
@@ -95,10 +86,7 @@ async def _update_donor_role(
     user.is_donor = is_donor
     await user.save()
 
-    if (
-        isinstance(member, hikari.Member)
-        and CONFIG.donor_role in member.role_ids
-    ):
+    if isinstance(member, hikari.Member) and CONFIG.donor_role in member.role_ids:
         return
 
     if is_donor:

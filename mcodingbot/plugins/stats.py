@@ -24,9 +24,7 @@ plugin = Plugin()
 
 
 @plugin.include
-@crescent.command(
-    name="stats", description="Exact values for mCoding statistics"
-)
+@crescent.command(name="stats", description="Exact values for mCoding statistics")
 async def stats(ctx: Context) -> None:
     embed = hikari.Embed(
         title="mCoding stats",
@@ -78,9 +76,7 @@ async def update_channels(bot: Bot) -> None:
 
     guild = bot.cache.get_guild(CONFIG.mcoding_server)
     if not guild:
-        return LOGGER.warning(
-            "Couldn't find mCoding guild, not updating member count."
-        )
+        return LOGGER.warning("Couldn't find mCoding guild, not updating member count.")
 
     guild_approx_members = guild.member_count
     if guild_approx_members is None:
@@ -143,9 +139,7 @@ async def get_stats(bot: Bot) -> Stats:
     views = int(statistics.get("viewCount", 0))
 
     if not (subs and views):
-        LOGGER.error(
-            "Statistics did not contain subscriberCount and viewCount."
-        )
+        LOGGER.error("Statistics did not contain subscriberCount and viewCount.")
         return _last_known_stats
 
     _last_known_stats.subs = subs

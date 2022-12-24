@@ -26,8 +26,7 @@ class MessageInfo(NamedTuple):
 
 
 PEP_REGEX = re.compile(
-    r"(?<!https:\/\/peps\.python\.org\/)pep[\s-]*(?P<pep>\d{1,4}\b)",
-    re.IGNORECASE,
+    r"(?<!https:\/\/peps\.python\.org\/)pep[\s-]*(?P<pep>\d{1,4}\b)", re.IGNORECASE
 )
 DISMISS_BUTTON_ID = "dismiss"
 MAX_AGE_FOR_SEND = timedelta(minutes=1)
@@ -51,18 +50,14 @@ def reset_cooldowns(peps: Iterable[PEPInfo], channel_id: int) -> None:
         pep_cooldown.reset(PEPBucket(pep=pep.number, channel=channel_id))
 
 
-def filter_can_send(
-    peps: Iterable[PEPInfo], channel_id: int
-) -> Iterable[PEPInfo]:
+def filter_can_send(peps: Iterable[PEPInfo], channel_id: int) -> Iterable[PEPInfo]:
     """
     Removes peps that can not be sent because of the cooldown from the list
     of peps.
     """
 
     def is_sendable(pep: PEPInfo) -> bool:
-        return pep_cooldown.can_trigger(
-            PEPBucket(pep=pep.number, channel=channel_id)
-        )
+        return pep_cooldown.can_trigger(PEPBucket(pep=pep.number, channel=channel_id))
 
     return filter(is_sendable, peps)
 
@@ -75,9 +70,7 @@ def decode_dismiss_button_id(dismiss_button_id: str) -> hikari.Snowflake:
     return hikari.Snowflake(dismiss_button_id.split(":")[1])
 
 
-def get_dismiss_button(
-    id: hikari.Snowflake,
-) -> hikari.api.MessageActionRowBuilder:
+def get_dismiss_button(id: hikari.Snowflake) -> hikari.api.MessageActionRowBuilder:
     action_row = plugin.app.rest.build_message_action_row()
     action_row.add_button(
         hikari.ButtonStyle.SECONDARY, encode_dismiss_button_id(id)
@@ -86,8 +79,7 @@ def get_dismiss_button(
 
 
 async def autocomplete_pep(
-    ctx: crescent.AutocompleteContext,
-    option: hikari.AutocompleteInteractionOption,
+    ctx: crescent.AutocompleteContext, option: hikari.AutocompleteInteractionOption
 ) -> list[hikari.CommandChoice]:
     if not option.value:
         return []
@@ -107,9 +99,7 @@ async def update_peps() -> None:
 
 
 @plugin.include
-@crescent.command(
-    name="pep", description="Find a Python Enhancement Proposal."
-)
+@crescent.command(name="pep", description="Find a Python Enhancement Proposal.")
 class PEPCommand:
     pep = crescent.option(
         int, "The PEP number or title.", autocomplete=autocomplete_pep
@@ -117,9 +107,7 @@ class PEPCommand:
 
     async def callback(self, ctx: Context) -> None:
         if not (pep := pep_manager.get(self.pep)):
-            await ctx.respond(
-                f"{self.pep} is not a valid PEP.", ephemeral=True
-            )
+            await ctx.respond(f"{self.pep} is not a valid PEP.", ephemeral=True)
             return
 
         await ctx.respond(embed=pep.embed())
@@ -141,9 +129,7 @@ def get_pep_refs(content: hikari.UndefinedNoneOr[str]) -> Iterable[PEPInfo]:
     return filter(None, map(pep_manager.get, peps))
 
 
-def get_peps_embed(
-    refs: Collection[PEPInfo],
-) -> hikari.UndefinedOr[hikari.Embed]:
+def get_peps_embed(refs: Collection[PEPInfo]) -> hikari.UndefinedOr[hikari.Embed]:
     """
     Get a pep embed from a list of refs. If there are no refs,
     return `hikari.UNDEFINED`.
@@ -178,9 +164,7 @@ async def on_message(event: hikari.MessageCreateEvent) -> None:
 
         embed = get_peps_embed(peps)
         response = await event.message.respond(
-            embed=embed,
-            component=get_dismiss_button(event.author.id),
-            reply=True,
+            embed=embed, component=get_dismiss_button(event.author.id), reply=True
         )
         recent_pep_responses[event.message.id] = MessageInfo(response.id, peps)
 
@@ -221,20 +205,16 @@ async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
                     original.message, final
                 )
             else:
-                await plugin.app.rest.delete_message(
-                    event.channel_id, original.message
-                )
+                await plugin.app.rest.delete_message(event.channel_id, original.message)
                 del recent_pep_responses[event.message.id]
-    elif (
-        peps := set(filter_can_send(peps, event.channel_id))
-    ) and within_age_cutoff(event.message.created_at):
+    elif (peps := set(filter_can_send(peps, event.channel_id))) and within_age_cutoff(
+        event.message.created_at
+    ):
         embed = get_peps_embed(peps)
         assert embed
         trigger_cooldowns(peps, event.channel_id)
         response = await event.message.respond(
-            embed=embed,
-            component=get_dismiss_button(event.author.id),
-            reply=True,
+            embed=embed, component=get_dismiss_button(event.author.id), reply=True
         )
         recent_pep_responses[event.message.id] = MessageInfo(response.id, peps)
 
@@ -249,9 +229,7 @@ async def on_message_delete(event: hikari.GuildMessageDeleteEvent) -> None:
         reset_cooldowns(original.peps, event.channel_id)
 
         with suppress(hikari.NotFoundError):
-            await plugin.app.rest.delete_message(
-                event.channel_id, original.message
-            )
+            await plugin.app.rest.delete_message(event.channel_id, original.message)
             del recent_pep_responses[event.message_id]
 
 

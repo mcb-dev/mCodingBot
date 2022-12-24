@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import asyncio
 from collections import defaultdict
 from typing import NamedTuple
@@ -14,6 +15,8 @@ from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
 from mcodingbot.utils import Context, Plugin
 
+LOGGER = logging.getLogger(__file__)
+
 MAX_HIGHLIGHTS = 25
 MAX_HIGHLIGHT_LENGTH = 32
 
@@ -25,10 +28,22 @@ async def has_permission(guild_id: int, user_id: int, channel_id: int) -> bool:
 
     channel = plugin.app.cache.get_guild_channel(channel_id)
     if not channel:
-        # must be a thread
+        # must be a thread, because hikari caches all other channel types
+        # entirely.
         thread = plugin.app.rest.fetch_channel(channel_id)
-        assert isinstance(thread, hikari.GuildThreadChannel)
-        return await has_permission(guild_id, user_id, thread.parent_id)
+
+        if isinstance(thread, hikari.GuildThreadChannel):
+            return await has_permission(guild_id, user_id, thread.parent_id)
+
+        elif isinstance(thread, hikari.PermissibleGuildChannel):
+            LOGGER.error("Non-thread channel was not cached. {}", thread)
+            # we can still use it though
+            channel = thread
+
+        else:
+            LOGGER.error("Non-thread channel was non-permissible.", thread)
+            # nothing we can do at this point
+            return False
 
     permissions = toolbox.calculate_permissions(member, channel)
     return hikari.Permissions.VIEW_CHANNEL in permissions

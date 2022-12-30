@@ -20,7 +20,8 @@ async def links(ctx: Context) -> None:
         title="Links",
         color=CONFIG.theme,
         description=(
-            f"**[mCoding Youtube]({CONFIG.mcoding_youtube})**\n"
+            f"**[mCoding website]({CONFIG.mcoding_website})**\n"
+            f"**[mCoding YouTube]({CONFIG.mcoding_youtube})**\n"
             f"**[mCoding repo]({CONFIG.mcoding_repo})**\n"
             f"**[mCodingBot repo]({CONFIG.mcodingbot_repo})**"
         ),

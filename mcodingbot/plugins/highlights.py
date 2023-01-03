@@ -146,6 +146,9 @@ async def list_highlights(ctx: Context) -> None:
 @plugin.include
 @crescent.event
 async def on_start(_: hikari.StartingEvent) -> None:
+    if CONFIG.no_db_mode:
+        return
+
     highlights = await Highlight.fetchmany()
 
     for highlight, user_highlights in zip(

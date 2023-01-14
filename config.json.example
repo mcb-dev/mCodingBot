@@ -1,4 +1,5 @@
 {
-    "db_password": "DATABASE-PASSWORD",
-    "discord_token": "DISCORD-TOKEN"
+    "discord_token": "DISCORD-TOKEN",
+    "no_db_mode": true,
+    "db_password": "OPTIONAL-DATABASE-PASSWORD"
 }

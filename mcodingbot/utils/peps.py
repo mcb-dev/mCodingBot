@@ -12,7 +12,7 @@ from mcodingbot.config import CONFIG
 from mcodingbot.utils.search import fuzzy_search
 
 if TYPE_CHECKING:
-    from mcodingbot.bot import Bot
+    from mcodingbot.model import Model
 
 _LOG = getLogger(__name__)
 
@@ -24,8 +24,8 @@ class PEPManager:
         self._peps: dict[int, PEPInfo] = {}
         self._pep_map: dict[int, str] = {}
 
-    async def fetch_pep_info(self, bot: Bot) -> None:
-        async with bot.session.get(
+    async def fetch_pep_info(self, model: Model) -> None:
+        async with model.session.get(
             "https://peps.python.org/api/peps.json"
         ) as resp:
             try:

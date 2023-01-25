@@ -1,9 +1,21 @@
-from mcodingbot.bot import Bot
+from mcodingbot.model import Model
+from mcodingbot.config import CONFIG
 
+import hikari
+import crescent
 
-def main() -> None:
-    Bot().run()
+bot = hikari.GatewayBot(
+    token=CONFIG.discord_token,
+    intents=(
+        hikari.Intents.ALL_UNPRIVILEGED
+        | hikari.Intents.GUILD_MEMBERS
+        | hikari.Intents.MESSAGE_CONTENT
+    ),
+)
 
+model = Model()
+client = crescent.Client(bot, model)
+client.plugins.load_folder("mcodingbot.plugins")
 
-if __name__ == "__main__":
-    main()
+bot.event_manager.subscribe(hikari.StartedEvent, model.on_start)
+bot.event_manager.subscribe(hikari.StoppedEvent, model.on_stop)

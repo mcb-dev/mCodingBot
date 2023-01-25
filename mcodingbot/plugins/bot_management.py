@@ -19,4 +19,4 @@ plugin = Plugin()
 )
 async def restart(ctx: Context) -> None:
     await ctx.respond("Restarting bot...")
-    await ctx.app.close()
+    await plugin.app.close()

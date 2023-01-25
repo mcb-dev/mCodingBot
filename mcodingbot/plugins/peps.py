@@ -95,7 +95,7 @@ async def autocomplete_pep(
 @plugin.include
 @tasks.loop(hours=12)
 async def update_peps() -> None:
-    await pep_manager.fetch_pep_info(plugin.app)
+    await pep_manager.fetch_pep_info(plugin.model)
 
 
 @plugin.include

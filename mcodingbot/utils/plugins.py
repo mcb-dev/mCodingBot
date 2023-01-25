@@ -1,20 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import Sequence
 
 import crescent
+import hikari
 
-if TYPE_CHECKING:
-    from mcodingbot.bot import Bot
+from mcodingbot.model import Model
 
 __all__: Sequence[str] = ("Context", "Plugin")
 
 
 class Context(crescent.Context):
-    app: Bot
+    app: hikari.GatewayBot
 
 
-class Plugin(crescent.Plugin):
-    @property
-    def app(self) -> Bot:
-        return cast("Bot", super().app)
+Plugin = crescent.Plugin[hikari.GatewayBot, Model]

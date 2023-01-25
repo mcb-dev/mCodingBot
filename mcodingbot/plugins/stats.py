@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from math import log2
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import crescent
 import hikari
@@ -12,10 +12,6 @@ from hikari import PermissibleGuildChannel
 
 from mcodingbot.config import CONFIG
 from mcodingbot.utils import Context, Plugin
-
-if TYPE_CHECKING:
-    from mcodingbot.model import Model
-
 
 LOGGER = logging.getLogger(__file__)
 

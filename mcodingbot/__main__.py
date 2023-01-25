@@ -1,8 +1,8 @@
-from mcodingbot.model import Model
-from mcodingbot.config import CONFIG
-
-import hikari
 import crescent
+import hikari
+
+from mcodingbot.config import CONFIG
+from mcodingbot.model import Model
 
 bot = hikari.GatewayBot(
     token=CONFIG.discord_token,
@@ -19,3 +19,5 @@ client.plugins.load_folder("mcodingbot.plugins")
 
 bot.event_manager.subscribe(hikari.StartedEvent, model.on_start)
 bot.event_manager.subscribe(hikari.StoppedEvent, model.on_stop)
+
+bot.run()

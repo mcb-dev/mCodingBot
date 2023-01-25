@@ -25,9 +25,7 @@ class PEPManager:
         self._pep_map: dict[int, str] = {}
 
     async def fetch_pep_info(self, bot: Bot) -> None:
-        async with bot.session.get(
-            "https://peps.python.org/api/peps.json"
-        ) as resp:
+        async with bot.session.get("https://peps.python.org/api/peps.json") as resp:
             try:
                 resp.raise_for_status()
             except aiohttp.ClientResponseError:
@@ -56,16 +54,12 @@ class PEPManager:
         Returns a tuple of (Items found, Amount of items found).
         """
         items_iter = (
-            value
-            for key, value in self._peps.items()
-            if str(key).startswith(query)
+            value for key, value in self._peps.items() if str(key).startswith(query)
         )
         items = list(itertools.islice(items_iter, limit))
         return items, len(items)
 
-    def search(
-        self, query: str, *, limit: int | None = None
-    ) -> Iterator[PEPInfo]:
+    def search(self, query: str, *, limit: int | None = None) -> Iterator[PEPInfo]:
         yielded = 0
 
         items: Iterable[PEPInfo] = ()
@@ -99,9 +93,7 @@ class PEPInfo:
 
     def embed(self) -> hikari.Embed:
         return hikari.Embed(
-            title=f"PEP {self.number}: {self.title}",
-            url=self.link,
-            color=CONFIG.theme,
+            title=f"PEP {self.number}: {self.title}", url=self.link, color=CONFIG.theme
         ).set_author(name=self.authors)
 
     @property

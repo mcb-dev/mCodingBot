@@ -26,14 +26,8 @@ class Config:
     donor_role: int | None = None
 
     # capacity, cooldown
-    highlight_message_sent_cooldown: tuple[int, timedelta] = (
-        1,
-        timedelta(minutes=1),
-    )
-    highlight_trigger_cooldown: tuple[int, timedelta] = (
-        1,
-        timedelta(seconds=30),
-    )
+    highlight_message_sent_cooldown: tuple[int, timedelta] = (1, timedelta(minutes=1))
+    highlight_trigger_cooldown: tuple[int, timedelta] = (1, timedelta(seconds=30))
     pep_cooldown: tuple[int, timedelta] = (1, timedelta(minutes=5))
 
     mcoding_yt_id: str = "YOUTUBE_CHANNEL_ID"
@@ -71,9 +65,7 @@ class Config:
                 c = cls(
                     **{
                         k: v
-                        for k, v in cast(
-                            "dict[Any, Any]", json.load(f)
-                        ).items()
+                        for k, v in cast("dict[Any, Any]", json.load(f)).items()
                         if k in keys
                     }
                 )

@@ -59,16 +59,14 @@ class CreateHighlight:
     async def callback(self, ctx: Context) -> None:
         if len(self.word) > MAX_HIGHLIGHT_LENGTH:
             await ctx.respond(
-                "Highlights can not be longer than 32 characters.",
-                ephemeral=True,
+                "Highlights can not be longer than 32 characters.", ephemeral=True
             )
             return
 
         total_highlights = await UserHighlight.count(user_id=ctx.user.id)
         if total_highlights >= MAX_HIGHLIGHTS:
             await ctx.respond(
-                f"You can only have {MAX_HIGHLIGHTS} highlights.",
-                ephemeral=True,
+                f"You can only have {MAX_HIGHLIGHTS} highlights.", ephemeral=True
             )
             return
 
@@ -79,8 +77,7 @@ class CreateHighlight:
             await highlight_model.users.add(user)
         except UniqueViolationError:
             await ctx.respond(
-                f'"{self.word}" is already one of your highlights.',
-                ephemeral=True,
+                f'"{self.word}" is already one of your highlights.', ephemeral=True
             )
         else:
             await ctx.respond(
@@ -191,9 +188,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     if event.is_bot:
         return
 
-    message_bucket = SentMessageBucket(
-        user=event.author_id, channel=event.channel_id
-    )
+    message_bucket = SentMessageBucket(user=event.author_id, channel=event.channel_id)
     sent_message_cooldown.reset(message_bucket)
     sent_message_cooldown.trigger(message_bucket)
 

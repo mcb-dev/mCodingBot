@@ -27,17 +27,11 @@ class Model:
             )
         else:
             if not CONFIG.sub_count_channel:
-                _warn_missing_config(
-                    "sub_count_channel", "post sub count stats"
-                )
+                _warn_missing_config("sub_count_channel", "post sub count stats")
             if not CONFIG.view_count_channel:
-                _warn_missing_config(
-                    "view_count_channel", "post view count stats"
-                )
+                _warn_missing_config("view_count_channel", "post view count stats")
             if not CONFIG.member_count_channel:
-                _warn_missing_config(
-                    "member_count_channel", "post member count stats"
-                )
+                _warn_missing_config("member_count_channel", "post member count stats")
             if not CONFIG.donor_role:
                 _warn_missing_config("donor_role", "update donor roles")
 

@@ -20,7 +20,7 @@ floodgate-rs = "^0.1.1"
 
 [tool.poetry.dev-dependencies]
 nox = ">=2022.8.7"
-black = "^22.8.0"
+black = "^23.1.0"
 ruff = "^0.0.151"
 isort = "^5.10.1"
 mypy = "^0.991"

@@ -18,7 +18,7 @@ def _warn_missing_config(variable: str, feature: str) -> None:
 class Model:
     def __init__(self) -> None:
         self._session: aiohttp.ClientSession | None = None
-        self._db: Database | None = None
+        self._db = Database()
 
         if not CONFIG.mcoding_server:
             _LOG.warning(
@@ -50,7 +50,7 @@ class Model:
     async def on_start(self, _: hikari.StartedEvent) -> None:
         self._session = aiohttp.ClientSession()
         if not CONFIG.no_db_mode:
-            self._db = await Database.create()
+            await self._db.open()
         else:
             _LOG.warning("Running bot without database.")
 

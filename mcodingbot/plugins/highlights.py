@@ -142,7 +142,7 @@ async def list_highlights(ctx: Context) -> None:
 
 @plugin.include
 @crescent.event
-async def on_start(_: hikari.StartingEvent) -> None:
+async def on_start(_: hikari.StartedEvent) -> None:
     if CONFIG.no_db_mode:
         return
 

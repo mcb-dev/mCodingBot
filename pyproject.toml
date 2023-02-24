@@ -36,6 +36,7 @@ warn_return_any = true
 warn_unused_configs = true
 strict = true
 namespace_packages = true
+enable_error_code = ["possibly-undefined"]
 
 [[tool.mypy.overrides]]
 module = 'asyncpg.*'

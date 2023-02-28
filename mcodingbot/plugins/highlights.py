@@ -70,6 +70,7 @@ class CreateHighlight:
             )
             return
 
+        self.word = self.word.casefold()
         highlight_model = await Highlight.get_or_create(highlight=self.word)
         user = await User.get_or_create(user_id=ctx.user.id)
 
@@ -198,7 +199,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     highlights: defaultdict[hikari.Snowflake, list[str]] = defaultdict(list)
 
     for highlight, users in highlights_cache.items():
-        if highlight in event.content:
+        if highlight in event.content.casefold():
             retry_after = trigger_cooldown.trigger(
                 TriggerBucket(channel=event.channel_id, highlight=highlight)
             )

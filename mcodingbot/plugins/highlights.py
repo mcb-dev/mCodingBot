@@ -198,7 +198,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
     highlights: defaultdict[hikari.Snowflake, list[str]] = defaultdict(list)
 
     for highlight, users in highlights_cache.items():
-        if highlight in event.content:
+        if highlight.casefold() in event.content.casefold():
             retry_after = trigger_cooldown.trigger(
                 TriggerBucket(channel=event.channel_id, highlight=highlight)
             )

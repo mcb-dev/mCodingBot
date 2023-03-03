@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections import defaultdict
 from typing import NamedTuple
 
 import crescent
 import hikari
+import toolbox
 from asyncpg import UniqueViolationError
 from floodgate import FixedMapping
 
@@ -13,8 +15,38 @@ from mcodingbot.config import CONFIG
 from mcodingbot.database.models import Highlight, User, UserHighlight
 from mcodingbot.utils import Context, Plugin
 
+LOGGER = logging.getLogger(__file__)
+
 MAX_HIGHLIGHTS = 25
 MAX_HIGHLIGHT_LENGTH = 32
+
+
+async def has_permission(guild_id: int, user_id: int, channel_id: int) -> bool:
+    member = plugin.app.cache.get_member(guild_id, user_id)
+    if not member:
+        return False
+
+    channel = plugin.app.cache.get_guild_channel(channel_id)
+    if not channel:
+        # must be a thread, because hikari caches all other channel types
+        # entirely.
+        thread = plugin.app.rest.fetch_channel(channel_id)
+
+        if isinstance(thread, hikari.GuildThreadChannel):
+            return await has_permission(guild_id, user_id, thread.parent_id)
+
+        elif isinstance(thread, hikari.PermissibleGuildChannel):
+            LOGGER.error("Non-thread channel was not cached. {}", thread)
+            # we can still use it though
+            channel = thread
+
+        else:
+            LOGGER.error("Non-thread channel was non-permissible.", thread)
+            # nothing we can do at this point
+            return False
+
+    permissions = toolbox.calculate_permissions(member, channel)
+    return hikari.Permissions.VIEW_CHANNEL in permissions
 
 
 class SentMessageBucket(NamedTuple):
@@ -166,6 +198,12 @@ async def on_start(_: hikari.StartedEvent) -> None:
 async def _dm_user_highlight(
     triggering_message: hikari.Message, triggers: list[str], user_id: int
 ) -> None:
+    assert triggering_message.guild_id is not None
+    if not await has_permission(
+        triggering_message.guild_id, user_id, triggering_message.channel_id
+    ):
+        return
+
     _avatar_url = triggering_message.author.avatar_url
     avatar_url = _avatar_url.url if _avatar_url else None
     embed = (

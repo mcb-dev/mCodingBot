@@ -16,10 +16,7 @@ class Highlight(Model):
     highlight_unique = Unique(highlight)
 
     users: ManyToMany[User, UserHighlight] = ManyToMany(
-        "id",
-        "user_highlights.highlight_id",
-        "user_highlights.user_id",
-        "users.user_id",
+        "id", "user_highlights.highlight_id", "user_highlights.user_id", "users.user_id"
     )
 
     primary_key = (id,)

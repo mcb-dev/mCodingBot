@@ -17,20 +17,19 @@ class Database(apgorm.Database):
     user_highlights = UserHighlight
     highlights = Highlight
 
-    @classmethod
-    async def create(cls: type[_SELF]) -> _SELF:
-        db = cls("mcodingbot/database/migrations")
-        await db.connect(
+    def __init__(self) -> None:
+        super().__init__("mcodingbot/database/migrations")
+
+    async def open(self) -> None:
+        await self.connect(
             host="localhost",
             database="mcodingbot",
             user="mcodingbot",
             password=CONFIG.db_password,
         )
-        if db.must_create_migrations():
+        if self.must_create_migrations():
             _LOGGER.info("Creating migrations...")
-            db.create_migrations()
-        if await db.must_apply_migrations():
+            self.create_migrations()
+        if await self.must_apply_migrations():
             _LOGGER.info("Applying migrations...")
-            await db.apply_migrations()
-
-        return db
+            await self.apply_migrations()

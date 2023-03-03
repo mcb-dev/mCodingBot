@@ -11,7 +11,7 @@ bot = "mcodingbot.__main__:main"
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"
 hikari = "^2.0.0.dev113"
-hikari-crescent = "^0.4.0"
+hikari-crescent = "^0.6.0"
 apgorm = "^1.0.0b12"
 rapidfuzz = "^2.10.0"
 cachetools = "^5.2.0"
@@ -21,17 +21,13 @@ hikari-toolbox = "^0.1.4"
 
 [tool.poetry.dev-dependencies]
 nox = ">=2022.8.7"
-black = "^22.8.0"
+black = "^23.1.0"
 ruff = "^0.0.151"
 isort = "^5.10.1"
-mypy = "^0.991"
+mypy = "^1.0"
 
 [tool.black]
-line-length = 79
 skip-magic-trailing-comma = true
-
-[tool.ruff]
-line-length = 79
 
 [tool.isort]
 profile = "black"
@@ -41,6 +37,7 @@ warn_return_any = true
 warn_unused_configs = true
 strict = true
 namespace_packages = true
+enable_error_code = ["possibly-undefined"]
 
 [[tool.mypy.overrides]]
 module = 'asyncpg.*'
